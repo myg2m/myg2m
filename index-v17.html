@@ -1,0 +1,2343 @@
+<!DOCTYPE html>
+<!--
+  Coach Tracker v14.0.0
+  Copyright (c) 2026 Coach Tracker. All rights reserved.
+  This software, its design, text and code are proprietary. Copying, modifying, reselling,
+  redistributing or reverse engineering it without written permission is prohibited.
+-->
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#eceff0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0d1215" media="(prefers-color-scheme: dark)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon.svg"><link rel="apple-touch-icon" href="icon.svg">
+<title>Coach Tracker</title>
+<meta name="copyright" content="Copyright 2026 Coach Tracker. All rights reserved.">
+<meta name="version" content="14.0.0">
+<meta name="robots" content="noindex,nofollow">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{color-scheme:light dark;--bg:#eceff0;--card:#fff;--ink:#101a1e;--mu:#5a6670;--bd:#dde2e5;--field:#f2f4f5;--acc:#e5461f;--accs:rgba(229,70,31,.1);--ok:#1b8a57;--btn:#101a1e;--btnt:#fff;--r:16px;--rs:12px;--pad:16px;--head:"Space Grotesk","Plus Jakarta Sans",system-ui,-apple-system,sans-serif;--body:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+@media(prefers-color-scheme:dark){:root{--bg:#0d1215;--card:#161d21;--ink:#eef2f3;--mu:#92a0a8;--bd:#263036;--field:#1e272c;--acc:#ff6a3d;--accs:rgba(255,106,61,.15);--ok:#3ec787;--btn:#eef2f3;--btnt:#0d1215}}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 var(--body);-webkit-font-smoothing:antialiased}
+#app{max-width:880px;margin:0 auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) 40px max(16px,env(safe-area-inset-left))}
+#app:has(.tabs){padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+h1{font:700 36px/1.02 var(--head);letter-spacing:-.025em;margin:0}
+h2{font:700 23px/1.12 var(--head);letter-spacing:-.02em;margin:0 0 4px}
+h3.ex{font:700 26px/1.08 var(--head);letter-spacing:-.02em;margin:0 0 8px}
+a{color:var(--ink);text-decoration-color:var(--acc);text-underline-offset:3px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 18px}
+.top .mu{margin-top:4px}
+.auth{min-height:80vh;min-height:calc(100dvh - 56px);display:flex;flex-direction:column;justify-content:center;max-width:420px;margin:0 auto}
+.auth h1{font-size:52px}
+.auth>.mu{margin:8px 0 22px;font-size:16px}
+.card{background:var(--card);border-radius:var(--r);padding:var(--pad);margin:0 0 14px;box-shadow:0 0 0 1px var(--bd)}
+.card.done{box-shadow:inset 5px 0 0 var(--ok),0 0 0 1px var(--bd)}
+.card h2{margin-bottom:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr));gap:14px;align-items:start}
+.grid>.card{margin:0}
+.grid>.card.row>div:first-child{flex:1 1 100%}
+.grid>.card.row>button{flex:1 1 auto!important}
+input:not([type=checkbox]),select{display:block;width:100%;min-height:48px;padding:11px 14px;font:inherit;font-size:16px;color:var(--ink);background:var(--field);border:1px solid transparent;border-radius:var(--rs);-webkit-appearance:none;appearance:none;min-width:0}
+select{padding-right:38px;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%238a979f' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+input[type=date]{text-align:left;-webkit-min-logical-width:calc(100% - 28px)}
+input::-webkit-date-and-time-value{text-align:left;min-height:1.3em}
+input::placeholder{color:var(--mu);opacity:.8}
+input:focus-visible,select:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+input[type=checkbox]{accent-color:var(--ok)}
+button{font:600 16px/1 var(--body);min-height:48px;padding:0 18px;border:0;border-radius:var(--rs);background:var(--btn);color:var(--btnt);cursor:pointer;width:auto;touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .08s}
+button:active{transform:scale(.98)}
+button:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button:disabled{opacity:.5}
+button.g{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--bd)}
+button.d{background:var(--accs);color:var(--acc)}
+button.sm{min-height:40px;padding:0 14px;font-size:15px}
+.card:not(.row)>button{width:100%}
+#cart>button{width:100%;margin-top:4px}
+#tb>button.g{min-height:40px;padding:0 14px;font-size:15px;margin:0 0 12px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row>input,.row>select{flex:1 1 150px}
+.row>div,.row>h2{flex:1 1 100px;min-width:0}
+.row>h2{margin:0}
+.row.u{flex-wrap:nowrap;gap:8px}
+.row.u>input{flex:1 1 0}
+.row.u>select{flex:0 0 84px}
+.gap{margin:10px 0}
+.mu{color:var(--mu);font-size:14px}
+.err{color:var(--acc);min-height:1.3em;margin:10px 0 0;font-size:14px}
+.fields{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.f1{flex:1 1 88px;min-width:0}.f2{flex:2 1 170px;min-width:0}
+.fields .mu{margin-bottom:4px}
+.tg{display:inline-block;font:600 15px/1.3 var(--body);background:var(--field);border-radius:10px;padding:8px 12px;margin:2px 0 8px}
+.card>input[data-k=note]{margin-top:2px}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px}
+.chk{display:flex;align-items:center;gap:10px;font-weight:600;min-height:48px;cursor:pointer}
+.chk input{width:26px;height:26px;margin:0}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.chip{position:relative;display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:0 14px;border-radius:99px;background:var(--field);font-size:15px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.chip input{position:absolute;inset:0;width:100%;height:100%;min-height:0;margin:0;opacity:0;cursor:pointer}
+.chip:has(input:checked){background:var(--btn);color:var(--btnt)}
+.chip:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:2px}
+.chip.stat{cursor:default}
+.chip.stat .mu{color:inherit;opacity:.7;font-size:13px}
+.mbox{margin:calc(var(--pad)*-1) calc(var(--pad)*-1) 14px;background:#000;border-radius:var(--r) var(--r) 0 0;overflow:hidden}
+[id^=xp] .mbox{margin:0;border-radius:var(--rs)}
+.mimg{display:block;width:100%;max-height:60vh;object-fit:contain;background:var(--field)}
+.mvid{display:block;width:100%;max-height:60vh;background:#000}
+.vbox{position:relative;width:100%;padding-top:56.25%;background:#111;overflow:hidden}
+.vbox>*{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+.vbox img{object-fit:cover}
+.play{display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.25);border-radius:0;padding:0;min-height:0}
+.play span{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.92);color:#111;font-size:24px;display:flex;align-items:center;justify-content:center;padding-left:4px}
+.mfail{padding:14px;background:var(--card);color:var(--mu);font-size:14px}
+.tabs{display:flex;gap:4px;position:fixed;left:0;right:0;bottom:0;z-index:20;padding:8px max(8px,env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));background:var(--card);background:color-mix(in srgb,var(--card) 90%,transparent);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-top:1px solid var(--bd)}
+.tabs button{flex:1;min-width:0;min-height:48px;padding:0 2px;background:none;color:var(--mu);font-size:13px;border-radius:10px}
+.tabs button.on{background:var(--btn);color:var(--btnt)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin:10px 0}
+.cw span{text-align:center;color:var(--mu);font-size:13px}
+.cd{background:var(--field);color:var(--ink);padding:0;min-height:44px;border-radius:12px;font-weight:600;position:relative}
+.cd.has::after{content:"";position:absolute;bottom:6px;left:50%;margin-left:-3px;width:6px;height:6px;border-radius:50%;background:var(--ok)}
+.cd.tod{box-shadow:inset 0 0 0 2px var(--acc)}
+.cd.sel{background:var(--btn);color:var(--btnt)}
+.cd.sel.has::after{background:var(--btnt)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-top:14px;padding-top:14px;border-top:1px solid var(--bd)}
+.stats b{display:block;font:700 26px/1.05 var(--head);letter-spacing:-.02em}
+.item{border-top:1px solid var(--bd);padding-top:12px;margin-top:12px}
+.item:first-child{border-top:0;padding-top:0;margin-top:0}
+#tr h2{margin:20px 2px 10px}
+@media(min-width:768px){
+:root{--pad:20px}
+#app,#app:has(.tabs){padding:max(28px,env(safe-area-inset-top)) 32px 56px}
+h1{font-size:46px}
+.tabs{position:static;padding:5px;margin:0 0 18px;border:0;border-radius:14px;background:var(--card);box-shadow:0 0 0 1px var(--bd);-webkit-backdrop-filter:none;backdrop-filter:none}
+.tabs button{font-size:15px}
+}
+@media(min-width:1100px){#app,#app:has(.tabs){max-width:1120px}}
+.card{box-shadow:0 0 0 1px var(--bd),0 4px 14px -8px rgba(16,26,30,.18);transition:box-shadow .2s,transform .2s}
+@media(hover:hover){.grid>.card:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--bd),0 10px 24px -10px rgba(16,26,30,.28)}}
+h1::after{content:"";display:block;width:44px;height:4px;border-radius:4px;background:var(--acc);margin-top:8px}
+.tabs button.on{background:var(--acc);color:#fff}
+@media(max-width:767px){.tabs{top:0;bottom:auto;padding:calc(8px + env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) 8px max(8px,env(safe-area-inset-left));border-top:0;border-bottom:1px solid var(--bd)}
+#app:has(.tabs){padding-top:calc(76px + env(safe-area-inset-top));padding-bottom:40px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- live effects (subtle) ---- */
+@keyframes rise{from{opacity:0;transform:translateY(10px)}}
+@keyframes fade{from{opacity:0}}
+@keyframes sh{to{background-position:-200% 0}}
+@keyframes pop{40%{transform:scale(1.1)}}
+@keyframes flash{0%{outline:3px solid color-mix(in srgb,var(--ok) 45%,transparent);outline-offset:0}100%{outline:3px solid transparent;outline-offset:8px}}
+@keyframes shake{20%{transform:translateX(-7px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+@keyframes toast{from{opacity:0;transform:translate(-50%,12px)}}
+#tb{animation:fade .25s both}
+#pl>.card,.grid:not(#xl)>.card{animation:rise .42s cubic-bezier(.2,.7,.2,1) both}
+#pl>.card:nth-child(2),.grid>.card:nth-child(2){animation-delay:.05s}
+#pl>.card:nth-child(3),.grid>.card:nth-child(3){animation-delay:.1s}
+#pl>.card:nth-child(4),.grid>.card:nth-child(4){animation-delay:.15s}
+#pl>.card:nth-child(n+5),.grid>.card:nth-child(n+5){animation-delay:.2s}
+.auth>*{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+.auth>:nth-child(2){animation-delay:.07s}.auth>:nth-child(3){animation-delay:.14s}
+.card.shake{animation:shake .4s}
+#pl>.card.flash,.card.flash{animation:flash .7s ease-out}
+.skel{height:96px;margin-bottom:14px;border-radius:var(--r);background:linear-gradient(90deg,var(--card) 30%,var(--field) 50%,var(--card) 70%);background-size:200% 100%;animation:sh 1.3s linear infinite;box-shadow:0 0 0 1px var(--bd)}
+.grid>.skel{margin:0}
+.prog .pt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:10px}
+#pgt{display:inline-block;transform-origin:left;font:700 21px/1.1 var(--head);letter-spacing:-.02em}
+.prog.cheer #pgt{animation:pop .45s}
+.bar{height:10px;border-radius:99px;background:var(--field);overflow:hidden}
+.bar i{display:block;height:100%;width:0;border-radius:99px;background:var(--acc);transition:width .7s cubic-bezier(.2,.8,.2,1),background .3s}
+.prog.all .bar i{background:var(--ok)}
+button{transition:transform .08s,background .2s,color .2s,filter .15s}
+button.ok{background:var(--ok);color:#fff}
+.chk input:checked{animation:pop .28s}
+.play span{transition:transform .15s}
+.play:active span{transform:scale(.92)}
+.toast{position:fixed;left:50%;bottom:calc(92px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:50;max-width:calc(100% - 32px);padding:12px 18px;border-radius:99px;background:var(--btn);color:var(--btnt);font-weight:600;font-size:15px;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:toast .3s cubic-bezier(.2,.8,.2,1) both;pointer-events:none}
+@media(hover:hover){
+button:hover{filter:brightness(1.1)}
+.card[onclick]{cursor:pointer;transition:transform .15s,box-shadow .15s}
+.card[onclick]:hover{transform:translateY(-2px);box-shadow:0 0 0 1px var(--bd),0 8px 20px rgba(0,0,0,.08)}
+}
+@media(min-width:768px){.toast{bottom:32px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+.setlist{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px}
+.setrow{display:flex;gap:8px;align-items:center}
+.setrow .tag{flex:0 0 54px;font:700 13px/1 var(--head);color:var(--mu);text-transform:uppercase}
+.setrow input{flex:1;min-height:42px;padding:8px 10px;font-size:15px}
+.setrow button{flex:0 0 auto;min-height:42px;padding:0 12px}
+.setpills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sp{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:8px;background:var(--field);font-size:13px;font-weight:600}
+.sp span{color:var(--mu);font-weight:500}
+.dayhd{display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer;user-select:none;-webkit-user-select:none}
+.dayhd .chev{display:inline-block;transition:transform .2s;color:var(--mu);font-size:13px;margin-right:6px}
+.card.open .dayhd .chev{transform:rotate(90deg)}
+
+.setlist{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px}
+.setrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.setrow .tag{flex:0 0 52px;font:700 13px/1 var(--head);color:var(--mu);text-transform:uppercase}
+.setrow input,.setrow select{flex:1 1 82px;min-width:0;min-height:42px;padding:8px 10px;font-size:15px}
+.setrow select{flex:0 0 76px;padding-right:26px}
+.setrow button{flex:0 0 auto;min-height:42px;padding:0 12px}
+.setcols{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}
+.scol{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;background:var(--field);font-size:13px;cursor:pointer}
+.scol input{width:auto;min-height:0;margin:0;accent-color:var(--acc)}
+@media(max-width:767px){.tabs{overflow-x:auto;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tabs button{flex:1 0 auto;padding:0 14px}}
+
+/* ---- v14: client context, sub-tabs, macros page ---- */
+.cbar{display:flex;gap:10px;margin:0 0 10px}.cbar select{flex:1}.cbar button{flex:0 0 auto}
+.subtabs{display:flex;gap:4px;padding:4px;margin:0 0 16px;background:var(--card);border-radius:14px;box-shadow:0 0 0 1px var(--bd);overflow-x:auto;scrollbar-width:none}
+.subtabs::-webkit-scrollbar{display:none}
+.subtabs button{flex:1 0 auto;min-height:40px;padding:0 14px;background:none;color:var(--mu);font-size:14px;border-radius:10px}
+.subtabs button.on{background:var(--btn);color:var(--btnt)}
+#tb.ctx #ac,#tb.ctx #tc,#tb.ctx #fc{display:none}
+#tb.ctx>button.g:first-child{display:none}
+details.card>summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:10px}
+details.card>summary::-webkit-details-marker{display:none}
+details.card>summary::after{content:"▾";color:var(--mu)}
+details.card[open]>summary::after{content:"▴"}
+details.card>summary h2{margin:0}
+details.card[open]>summary{margin-bottom:12px}
+details.more{margin:6px 0 0}
+details.more>summary{cursor:pointer;color:var(--mu);font-size:14px;font-weight:600;min-height:40px;display:flex;align-items:center}
+details.more[open]>summary{margin-bottom:6px}
+.trend{width:100%;height:auto;display:block;margin:4px 0 8px}
+.mcwrap .prog .pt b{font:700 24px/1.1 var(--head)}
+
+/* ---- v14b: overflow menus ---- */
+.menu{position:relative;flex:0 0 auto}
+.menu>summary{list-style:none;cursor:pointer;min-height:48px;min-width:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;box-shadow:inset 0 0 0 1.5px var(--bd);font:700 20px/1 var(--body);user-select:none}
+.menu>summary::-webkit-details-marker{display:none}
+.menu-pop{position:absolute;right:0;top:calc(100% + 6px);z-index:15;min-width:170px;display:flex;flex-direction:column;gap:6px;padding:8px;background:var(--card);border-radius:14px;box-shadow:0 0 0 1px var(--bd),0 12px 28px rgba(0,0,0,.18)}
+.menu-pop button{width:100%;text-align:left}
+.card:has(.menu[open]){position:relative;z-index:16}
+.grid>.card.row>.menu{flex:0 0 auto}
+
+/* ---- v14c: client screens ---- */
+.grid>.sec{grid-column:1/-1;margin:10px 2px 0}
+.prog#pg{position:sticky;top:max(8px,env(safe-area-inset-top));z-index:6}
+.row.u>button.sm{flex:0 0 48px;padding:0;font-size:22px}
+.rf{min-height:40px;padding:0 14px;border-radius:99px;background:var(--field);color:var(--ink);font:600 14px/1 var(--body);display:inline-flex;align-items:center;gap:6px;max-width:100%}
+.rf span{color:var(--mu);font-weight:500;white-space:nowrap}.rf b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+
+/* ---- v14d: client search combobox ---- */
+.cb{position:relative}
+.cb-list{position:absolute;left:0;right:0;top:calc(100% + 6px);z-index:15;max-height:320px;overflow:auto;padding:6px;background:var(--card);border-radius:14px;box-shadow:0 0 0 1px var(--bd),0 12px 28px rgba(0,0,0,.18);display:flex;flex-direction:column;gap:2px}
+.cb-list[hidden]{display:none}
+.cb-o{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;min-height:44px;background:none;color:var(--ink);font-weight:600;padding:0 12px;border-radius:10px}
+.cb-o.on,.cb-o:hover{background:var(--field)}
+.cb-o span{color:var(--mu);font-weight:500;font-size:14px}
+.cb-n{padding:10px 12px;color:var(--mu);font-size:14px}
+.card:has(.cb-list:not([hidden])){position:relative;z-index:16}
+.rsel{display:inline-flex;align-items:center;gap:2px;min-height:40px;padding:0 6px 0 14px;border-radius:99px;background:var(--btn);color:var(--btnt);font-size:15px}
+.rsel button{min-height:32px;width:32px;padding:0;background:none;color:inherit;font-size:18px;border-radius:50%}
+.cb-o.add{color:var(--acc)}.cb input{width:100%}
+
+/* ---- v14e: compact lists, wide dropdowns, textarea, rest timer ---- */
+.grid{gap:8px}
+.grid>.card{padding:12px}
+.grid>.card.row{padding:10px 12px;gap:8px}
+.grid>.card.row>div:first-child{flex:1 1 140px;min-width:0}
+.grid>.card.row>button{flex:0 0 auto!important;min-height:38px;padding:0 14px;font-size:14px}
+.grid>.card.row .menu>summary{min-height:38px;min-width:38px;font-size:18px}
+.grid>.card.row .mu{font-size:13px}
+.grid>.card.row select{min-height:38px;padding-top:6px;padding-bottom:6px;font-size:14px}
+.cb{position:static}.card{position:relative}
+.cb-list{left:0;right:0;top:auto;margin-top:6px;max-height:280px}
+textarea{display:block;width:100%;min-height:84px;padding:11px 14px;font:inherit;font-size:16px;line-height:1.4;color:var(--ink);background:var(--field);border:1px solid transparent;border-radius:var(--rs);resize:vertical}
+#rt{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:50;display:none;align-items:center;gap:10px;padding:10px 12px 10px 16px;background:var(--card);border-radius:18px;box-shadow:0 0 0 1px var(--bd),0 12px 30px rgba(0,0,0,.35);width:min(92vw,420px)}
+#rt.on{display:flex}#rt .rt-t{flex:1;min-width:0}#rt b{display:block;font:700 28px/1.1 var(--head);font-variant-numeric:tabular-nums}#rt.done b{color:var(--ok)}
+#rt button{min-height:40px;padding:0 14px;font-size:14px;flex:0 0 auto}
+#legal{max-width:880px;margin:0 auto;padding:18px 16px calc(96px + env(safe-area-inset-bottom,0px));text-align:center;color:var(--mu);font-size:12px;line-height:1.5}#legal b{font-weight:600}
+</style></head>
+<body><div id="app"><h1>Coach Tracker</h1><p class="mu">Loading…</p></div><footer id="legal"></footer>
+<script>
+const APP = { name: 'Coach Tracker', version: '14.0.0', owner: 'Coach Tracker', year: 2026 };
+(function () {
+  const f = document.getElementById('legal');
+  if (f) f.innerHTML = `<b>${APP.name}</b> v${APP.version} · © ${APP.year} ${APP.owner}. All rights reserved.<br>Private software for authorised clients and staff only. Copying, modifying, reselling or sharing this app or its content without written permission is prohibited.`;
+  try { console.info(`%c${APP.name} v${APP.version}%c © ${APP.year} ${APP.owner}. All rights reserved. Unauthorised copying or reuse is prohibited.`, 'font-weight:700', ''); } catch (_) {}
+})();
+const SUPABASE_URL = 'https://ekobxhmeilkausynaucx.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_71I1atHzuqFBciPJuLbqXg_qlC_zdsF';
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const sbSignup = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false }
+});
+
+const $ = i => document.getElementById(i);
+const set = (id, h) => { const e = $(id); if (e) e.innerHTML = h; return !!e; };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today = () => new Date().toLocaleDateString('en-CA');
+const norm = s => String(s || '').toLowerCase().replace(/[^a-z]/g, '');
+const num = v => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+const r1 = v => Math.round(num(v) * 10) / 10;
+
+const S = { u: null, ex: [], cl: [], foods: [], foodDate: today(), foodMeal: 'Breakfast', foodLogs: [], cart: [], cid: '', date: today(), tab: 'clients', cTab: 'workouts', loaded: 0 };
+
+/* ---------- Exercise helpers ---------- */
+const CARDIO = ['Elliptical', 'Spin bike', 'Treadmill', 'Seated bike', 'Assault bike', 'RowErg', 'SkiErg', 'Stair Master', 'Running'];
+const CKEYS = CARDIO.map(norm).concat(['assaultedbike', 'rower', 'stairmaster', 'stairmill', 'stepmill']);
+const isCardio = n => CKEYS.includes(norm(n));
+function cleanEx() {
+  const old = {}; S.ex.forEach(e => { if (e.media && isCardio(e.name)) old[norm(e.name)] = e.media; });
+  S.ex = S.ex.filter(e => norm(e.group) != 'cardio' && !isCardio(e.name)).concat(CARDIO.map(name => ({ name, group: 'Cardio', media: old[norm(name)] || '' })));
+}
+const ytSearch = n => 'https://www.youtube.com/results?search_query=' + encodeURIComponent(n + ' exercise how to');
+const okUrl = u => /^https?:\/\//i.test(String(u || '').trim());
+const isImg = u => /\.(png|jpe?g|gif|webp)(\?|#|$)/i.test(u);
+const isIOS = () => /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform == 'MacIntel' && navigator.maxTouchPoints > 1);
+const driveId = u => { const m = String(u).match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=)([\w-]{10,})/i); return m ? m[1] : ''; };
+const isVid = u => /\.(mp4|webm|mov)(\?|#|$)/i.test(u);
+
+const MEDIA = {};
+const ytId = u => { const m = String(u).match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/))([\w-]{11})/i); return m ? m[1] : ''; };
+function splitMedia(raw) { const m = String(raw || '').trim().match(/^(.*?)(?:#(photo|video))?$/i); return { url: m[1], type: (m[2] || 'auto').toLowerCase() }; }
+function composeMedia(url, type) { url = String(url || '').trim(); return url ? (type && type != 'auto' ? url + '#' + type : url) : ''; }
+function parseMedia(raw) {
+  const s = splitMedia(raw), url = s.url, hint = s.type == 'auto' ? '' : s.type;
+  if (!okUrl(url)) return null;
+  const y = ytId(url), d = driveId(url);
+  if (y) return { url, kind: 'yt', id: y, type: 'video' };
+  if (d) return { url, kind: 'drive', id: d, type: hint || 'video' };
+  if (isImg(url)) return { url, kind: 'file', type: 'photo' };
+  if (isVid(url)) return { url, kind: 'file', type: 'video' };
+  if (hint) return { url, kind: 'file', type: hint };
+  return { url, kind: 'link', type: 'link' };
+}
+function mediaBlock(raw, dom, name) {
+  const m = parseMedia(raw); if (!m) return '';
+  MEDIA[dom] = m;
+  const alt = esc(name || '');
+  if (m.kind == 'link') return `<div class="gap"><a href="${esc(m.url)}" target="_blank" rel="noopener">▶ Open how-to link</a></div>`;
+  if (m.type == 'photo') {
+    const src = m.kind == 'drive' ? `https://lh3.googleusercontent.com/d/${m.id}` : m.url;
+    return `<div class="mbox"><img class="mimg" loading="lazy" src="${esc(src)}" alt="${alt}" onerror="this.outerHTML='<div class=&quot;mfail&quot;>This photo can’t be loaded. If it is on Google Drive, set sharing to “Anyone with the link”.</div>'"></div>`;
+  }
+  if (m.kind == 'file') return `<div class="mbox"><video class="mvid" controls playsinline preload="metadata" src="${esc(m.url)}#t=0.1"></video></div>`;
+  const poster = m.kind == 'yt' ? `https://i.ytimg.com/vi/${m.id}/hqdefault.jpg` : `https://drive.google.com/thumbnail?id=${m.id}&sz=w800`;
+  return `<div class="mbox"><div class="vbox" id="v_${dom}"><img src="${poster}" alt="${alt}" loading="lazy" onerror="this.style.display='none'"><button class="play" onclick="playMedia('${dom}')" aria-label="Play video"><span>▶</span></button></div></div>`
+    + (m.kind == 'drive' ? `<div class="mu" style="margin:-4px 0 8px"><a href="https://drive.google.com/file/d/${m.id}/view" target="_blank" rel="noopener">Video not playing? Open in Google Drive</a></div>` : '');
+}
+function playMedia(dom) {
+  const m = MEDIA[dom], box = $('v_' + dom); if (!m || !box) return;
+  const frame = src => `<iframe src="${src}" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen></iframe>`;
+  if (m.kind == 'yt') box.innerHTML = frame(`https://www.youtube-nocookie.com/embed/${m.id}?autoplay=1&playsinline=1&rel=0&modestbranding=1`);
+  else if (isIOS()) box.innerHTML = `<video controls playsinline autoplay src="https://drive.usercontent.google.com/download?id=${m.id}&export=download&confirm=t" onerror="driveFrame('${dom}')"></video>`;
+  else driveFrame(dom);
+}
+function driveFrame(dom) { const m = MEDIA[dom], box = $('v_' + dom); if (m && box) box.innerHTML = `<iframe src="https://drive.google.com/file/d/${m.id}/preview" allow="autoplay; fullscreen" allowfullscreen></iframe>`; }
+
+const FD = { sets: 'Sets', reps: 'Reps', weight: 'Weight', duration: 'Duration', distance: 'Distance' };
+const UN = { duration: ['min', 'sec', 'hr'], distance: ['km', 'm', 'mi'] };
+const UDEF = { duration: 'min', distance: 'km' };
+const ALIAS = {
+  duration: { sec: ['s', 'sec', 'secs', 'second', 'seconds'], min: ['m', 'min', 'mins', 'minute', 'minutes'], hr: ['h', 'hr', 'hrs', 'hour', 'hours'] },
+  distance: { km: ['km', 'kms', 'kilometer', 'kilometers', 'kilometre', 'kilometres'], m: ['m', 'meter', 'meters', 'metre', 'metres'], mi: ['mi', 'mile', 'miles'] }
+};
+function parseUV(k, v) {
+  const m = String(v ?? '').trim().match(/^([\d.,]+)\s*([a-zA-Z]*)$/);
+  if (!m) return { n: '', u: UDEF[k], raw: String(v ?? '').trim() };
+  const w = m[2].toLowerCase(); let u = UDEF[k];
+  if (w) { const hit = Object.keys(ALIAS[k]).find(x => ALIAS[k][x].includes(w)); if (hit) u = hit; }
+  return { n: m[1].replace(',', '.'), u };
+}
+const uv = (k, v) => { const p = parseUV(k, v); return p.n === '' ? p.raw : `${p.n} ${p.u}`; };
+const unitSel = (k, attr, sel) => `<select ${attr} >${UN[k].map(x => `<option ${x == sel ? 'selected' : ''}>${x}</option>`).join('')}</select>`;
+const ORDER = ['sets', 'reps', 'weight', 'duration', 'distance'];
+const fieldsOf = i => {
+  const f = String(i.fields || '').split(',').filter(x => FD[x]);
+  return f.length ? f : (isCardio(i.exercise) ? ['duration'] : ['sets', 'reps', 'weight']);
+};
+const val = (o, k, i) => { let v = o ? o[k] : ''; if (!v && k == 'duration' && !i.fields && isCardio(i.exercise)) v = o ? o.reps : ''; return v || ''; };
+function fmt(o, i) {
+  const f = fieldsOf(i), g = k => String(val(o, k, i)).trim(), p = [];
+  const s = f.includes('sets') ? g('sets') : '', r = f.includes('reps') ? g('reps') : '';
+  if (s && r) p.push(`${s} × ${r}`); else if (s) p.push(`${s} sets`); else if (r) p.push(`${r} reps`);
+  if (f.includes('weight') && g('weight')) p.push('@ ' + g('weight'));
+  if (f.includes('duration') && g('duration')) p.push(uv('duration', g('duration')));
+  if (f.includes('distance') && g('distance')) p.push(uv('distance', g('distance')));
+  return esc(p.join(' · '));
+}
+
+/* ---------- Supabase Data Adapter ---------- */
+function checkErr(res, fallback) {
+  if (res && res.error) throw new Error(res.error.message || fallback || 'Database error');
+  return res.data;
+}
+
+async function api(action, d = {}) {
+  switch (action) {
+    case 'login': {
+      const raw = String(d.username || '').trim().toLowerCase();
+      const email = raw.includes('@') ? raw : `${raw}@coachtracker.local`;
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: d.password });
+      if (error) throw new Error(/invalid login|invalid credentials/i.test(error.message || '') ? 'Wrong username or password' : (error.message || 'Could not log in'));
+      const prof = checkErr(await sb.from('profiles').select('*').eq('id', data.user.id).single(), 'Profile missing');
+      return { user: prof };
+    }
+    case 'clients': {
+      let q = sb.from('profiles').select('id, name, username').eq('role', 'client'); if (S.u && S.u.role === 'coach') q = q.eq('created_by', S.u.id);
+      const cl = checkErr(await q.order('name'));
+      return { cl };
+    }
+    case 'coaches': {
+      const coaches = checkErr(await sb.from('profiles').select('id, name, username').eq('role', 'coach').order('name'));
+      return { coaches };
+    }
+    case 'allUsers': {
+      const users = checkErr(await sb.from('profiles').select('id, name, username, role').order('name'));
+      return { users };
+    }
+    case 'setRole': {
+      if (S.u.role !== 'admin') throw new Error('Not allowed');
+      if (!['client', 'coach', 'admin'].includes(d.role)) throw new Error('Invalid role');
+      checkErr(await sb.from('profiles').update({ role: d.role }).eq('id', d.userId));
+      return { ok: 1 };
+    }
+    case 'exercises': {
+      const ex = checkErr(await sb.from('exercises').select('name, group, media').order('name'));
+      return { ex };
+    }
+    case 'foods': {
+      const foods = checkErr(await sb.from('foods').select('name, serving, protein, carbs, sugar, fat, calories').order('name'));
+      return { foods };
+    }
+    case 'getFoodLogs': {
+      const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? d.clientId : S.u.id;
+      const items = checkErr(await sb.from('food_logs').select('*').eq('client_id', cid).eq('date', d.date).order('created_at', { ascending: true }));
+      return { items };
+    }
+    case 'addFoodLog': {
+      const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? d.clientId : S.u.id;
+      const row = checkErr(await sb.from('food_logs').insert({
+        client_id: cid,
+        date: d.date,
+        meal: d.meal || 'Meal',
+        food_name: d.food_name,
+        serving: d.serving || '',
+        servings: num(d.servings) > 0 ? num(d.servings) : 1,
+        protein: r1(d.protein),
+        carbs: r1(d.carbs),
+        sugar: r1(d.sugar),
+        fat: r1(d.fat),
+        calories: r1(d.calories),
+        notes: d.notes || ''
+      }).select().single());
+      return { ok: 1, item: row };
+    }
+    case 'delFoodLog': {
+      checkErr(await sb.from('food_logs').delete().eq('id', d.id));
+      return { ok: 1 };
+    }
+    case 'addClient': {
+      const nm = String(d.name || '').trim();
+      const un = String(d.username || '').trim().toLowerCase();
+      const pw = String(d.password || '');
+      const allowedRoles = S.u.role === 'admin' ? ['client', 'coach', 'admin'] : ['client'];
+      const targetRole = allowedRoles.includes(d.role) ? d.role : 'client';
+      if (!nm || !un) throw new Error('Name and username are required');
+      if (pw.length < 4) throw new Error('Password must be 4+ characters');
+      const email = un.includes('@') ? un : `${un}@coachtracker.local`;
+
+      const { data: authData, error: authErr } = await sbSignup.auth.signUp({
+        email,
+        password: pw,
+        options: { data: { name: nm, username: un, role: targetRole } }
+      });
+      if (authErr) throw new Error(authErr.message || 'Could not create client account');
+      if (!authData || !authData.user) throw new Error('Account creation returned no user');
+
+      checkErr(await sb.from('profiles').upsert({
+        id: authData.user.id,
+        name: nm,
+        username: un,
+        role: targetRole,
+        created_by: S.u.id
+      }, { onConflict: 'id' }));
+      return { ok: 1 };
+    }
+    case 'resetPw': {
+      checkErr(await sb.rpc('admin_reset_password', {
+        p_client_id: d.clientId,
+        p_password: d.password
+      }));
+      return { ok: 1 };
+    }
+    case 'delClient': {
+      checkErr(await sb.rpc('admin_delete_client', { p_client_id: d.clientId }));
+      return { ok: 1 };
+    }
+    case 'addExercise': {
+      const n = String(d.name || '').trim();
+      if (n) {
+        checkErr(await sb.from('exercises').upsert({ name: n, group: d.group || 'Custom' }, { onConflict: 'name', ignoreDuplicates: true }));
+      }
+      return { ok: 1 };
+    }
+    case 'setMedia': {
+      const n = String(d.name || '').trim();
+      checkErr(await sb.from('exercises').upsert({ name: n, group: d.group || 'Custom', media: d.media || '' }, { onConflict: 'name' }));
+      return { ok: 1 };
+    }
+    case 'assign': {
+      const rows = [];
+      (d.dates || []).forEach(date => (d.items || []).forEach(it => rows.push({
+        client_id: d.clientId,
+        date,
+        exercise: it.exercise,
+        sets: it.sets || '',
+        reps: it.reps || '',
+        weight: it.weight || '',
+        duration: it.duration || '',
+        distance: it.distance || '',
+        fields: it.fields || '',
+        notes: it.notes || ''
+      })));
+      checkErr(await sb.from('assign').insert(rows));
+      return { n: rows.length };
+    }
+    case 'editAssign': {
+      checkErr(await sb.from('assign').update({ sets: d.sets, reps: d.reps, weight: d.weight }).eq('id', d.id));
+      return { ok: 1 };
+    }
+    case 'delAssign': {
+      checkErr(await sb.from('assign').delete().eq('id', d.id));
+      return { ok: 1 };
+    }
+    case 'plan': {
+      if (S.u.role === 'client' && d.date < today()) return { items: [] };
+      const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? d.clientId : S.u.id;
+      const [aRes, eRes, mRes] = await Promise.all([
+        sb.from('assign').select('*, logs(*)').eq('client_id', cid).eq('date', d.date),
+        sb.from('exercises').select('name, media'),
+        sb.from('client_day_meta').select('program_name').eq('client_id', cid).eq('date', d.date).maybeSingle()
+      ]);
+      const assigns = checkErr(aRes);
+      const exList = checkErr(eRes);
+      const med = {};
+      exList.forEach(e => { if (e.media) med[e.name.toLowerCase()] = e.media; });
+      const items = assigns.map(a => {
+        const lg = Array.isArray(a.logs) ? a.logs[0] : a.logs;
+        return {
+          ...a,
+          media: med[a.exercise.toLowerCase()] || '',
+          log: lg ? { ...lg, done: String(lg.done) } : null
+        };
+      });
+      return { items, program: (mRes && mRes.data && mRes.data.program_name) || '' };
+    }
+    case 'log': {
+      checkErr(await sb.from('logs').upsert({
+        assign_id: d.assignId,
+        sets: d.sets || '',
+        reps: d.reps || '',
+        weight: d.weight || '',
+        duration: d.duration || '',
+        distance: d.distance || '',
+        note: d.note || '',
+        done: Boolean(d.done === true || d.done === 'true'),
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'assign_id' }));
+      return { ok: 1 };
+    }
+    case 'progress': {
+      const t = today();
+      const assigns = checkErr(await sb.from('assign').select('*, logs(*)').eq('client_id', d.clientId).lte('date', t).order('date', { ascending: false }));
+      const by = {};
+      assigns.forEach(a => {
+        const lg = Array.isArray(a.logs) ? a.logs[0] : a.logs;
+        const isDone = lg && lg.done === true;
+        const x = by[a.date] = by[a.date] || { date: a.date, done: 0, total: 0, items: [] };
+        x.total++;
+        if (isDone) x.done++;
+        x.items.push({ ...a, log: lg ? { ...lg, done: String(lg.done) } : null });
+      });
+      const days = Object.keys(by).sort().reverse().map(k => by[k]).slice(0, 30);
+      return { days };
+    }
+    /* ---------- Admin-Only Session Recorder ---------- */
+    case 'getSessions': {
+      const items = checkErr(await sb.from('admin_sessions').select('*').eq('client_id', d.clientId).order('date', { ascending: false }).order('created_at', { ascending: true }));
+      return { items };
+    }
+    case 'addSession': {
+      const row = checkErr(await sb.from('admin_sessions').insert({
+        client_id: d.clientId,
+        date: d.date,
+        exercise: d.exercise,
+        fields: d.fields,
+        sets: d.sets,
+        reps: d.reps,
+        weight: d.weight,
+        duration: d.duration,
+        distance: d.distance,
+        notes: d.notes
+      }).select().single());
+      return { ok: 1, id: row.id };
+    }
+    case 'delSession': {
+      checkErr(await sb.from('admin_sessions').delete().eq('id', d.id));
+      return { ok: 1 };
+    }
+  }
+  throw new Error('Unknown action: ' + action);
+}
+
+/* ---------- Live effects ---------- */
+function toast(msg) {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+  const t = document.createElement('div'); t.className = 'toast'; t.setAttribute('role', 'status'); t.textContent = msg;
+  document.body.appendChild(t); setTimeout(() => t.remove(), 2400);
+}
+function updateProg() {
+  const p = $('pg'); if (!p) return;
+  const t = document.querySelectorAll('#pl>.card').length, d = document.querySelectorAll('#pl>.card.done').length;
+  p.hidden = !t; if (!t) return;
+  const was = p.classList.contains('all'), full = d == t;
+  p.classList.toggle('all', full);
+  $('pgt').textContent = full ? 'Workout complete' : `${d} of ${t} done`;
+  $('pgs').textContent = full ? 'All exercises logged' : `${t - d} to go`;
+  $('pgb').style.width = (d / t * 100) + '%';
+  if (full && !was) { p.classList.remove('cheer'); void p.offsetWidth; p.classList.add('cheer'); }
+}
+function countUp() {
+  const key = S.sc + '|' + document.querySelectorAll('.stats b').length; if (S.cuKey == key) return; S.cuKey = key;
+  if (matchMedia('(prefers-reduced-motion:reduce)').matches) return;
+  document.querySelectorAll('.stats b').forEach(el => {
+    const n = Number(el.textContent); if (!Number.isInteger(n) || n < 1) return;
+    const t0 = performance.now();
+    (function f(t) { const k = Math.min(1, (t - t0) / 700); el.textContent = Math.round(n * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0);
+  });
+}
+
+/* ---------- Routines (additive module) ---------- */
+async function rtLoad() {
+  try {
+    const r = checkErr(await sb.from('routines').select('id,name,routine_items(*)').order('name'));
+    r.forEach(x => x.routine_items.sort((a, b) => a.position - b.position)); S.rt = r; S.rtErr = '';
+  } catch (e) { S.rt = []; S.rtErr = e.message; }
+  cartView();
+}
+function rtBar() {
+  if (!S.rt) { rtLoad(); return '<div class="skel" style="height:64px"></div>'; }
+  return `<div class="card"><h2>Routines</h2>` + (S.rtErr ? `<p class="err">Routines unavailable: ${esc(S.rtErr)}</p>` : '')
+    + (S.rt.length ? `<div class="row"><select id="rtsel">${S.rt.map(r => `<option value="${r.id}">${esc(r.name)} (${r.routine_items.length})</option>`).join('')}</select><button class="g" onclick="rtUse()">Add to list</button><button class="d sm" onclick="rtDel()">Delete</button></div>` : '<p class="mu">No routines yet. Build a list below, then save it.</p>')
+    + (S.cart.length ? `<div class="row gap"><input id="rtname" placeholder="Name this list as a routine"><button onclick="rtSave()">Save routine</button></div>` : '') + `</div>`;
+}
+function rtUse() {
+  const r = S.rt.find(x => x.id == $('rtsel').value); if (!r) return;
+  r.routine_items.forEach(i => S.cart.push({ exercise: i.exercise, fields: i.fields, sets: i.sets, reps: i.reps, weight: i.weight, duration: i.duration, distance: i.distance, notes: i.notes }));
+  cartView(); toast(r.routine_items.length + ' exercises added');
+}
+async function rtSave() {
+  const n = (($('rtname') || {}).value || '').trim(); if (!n) { alert('Name the routine first'); return; }
+  const r = checkErr(await sb.from('routines').insert({ name: n }).select().single());
+  checkErr(await sb.from('routine_items').insert(S.cart.map((c, i) => ({ routine_id: r.id, position: i, exercise: c.exercise, fields: c.fields || '', sets: c.sets || '', reps: c.reps || '', weight: c.weight || '', duration: c.duration || '', distance: c.distance || '', notes: c.notes || '' }))));
+  S.rt = null; toast('Routine saved'); cartView();
+}
+async function rtDel() {
+  const r = S.rt.find(x => x.id == $('rtsel').value); if (!r || !confirm('Delete routine "' + r.name + '"?')) return;
+  checkErr(await sb.from('routines').delete().eq('id', r.id)); S.rt = null; cartView();
+}
+
+/* ---------- Routines tab (coach/admin) ---------- */
+async function rtRefresh() {
+  try {
+    const r = checkErr(await sb.from('routines').select('id,name,routine_items(*)').order('name'));
+    r.forEach(x => x.routine_items.sort((a, b) => a.position - b.position)); S.rt = r; S.rtErr = '';
+  } catch (e) { S.rt = []; S.rtErr = e.message; }
+  if (S.tab == 'routines') tRoutines();
+}
+function tRoutines() {
+  if (!S.rt) { set('tb', '<div class="skel"></div><div class="skel"></div>'); rtRefresh(); return; }
+  if (S.rd) return rEdit();
+  if (S.ra) return rAssign();
+  set('tb', `<div class="row" style="margin-bottom:12px"><h2>Routines</h2><button style="flex:0 0 auto" onclick="rNew()">+ New routine</button></div>` + (S.rtErr ? `<p class="err">${esc(S.rtErr)}</p>` : '')
+    + '<div class="grid">' + (S.rt.map(r => `<div class="card"><b>${esc(r.name)}</b><div class="mu">${r.routine_items.length} exercise${r.routine_items.length == 1 ? '' : 's'}</div><div class="mu gap">${esc(r.routine_items.slice(0, 4).map(i => i.exercise).join(', '))}${r.routine_items.length > 4 ? ' …' : ''}</div><div class="row"><button onclick="rAssignOpen('${r.id}')">Assign</button><button class="g" onclick="rEditOpen('${r.id}')">Edit</button>${menu(`<button class="g" onclick="rDup('${r.id}')">Duplicate</button><button class="d" onclick="rRemove('${r.id}')">Delete</button>`)}</div></div>`).join('') || '<p class="mu">No routines yet. Tap “+ New routine”.</p>') + '</div>');
+}
+function rNew() { S.rd = { id: null, name: '', items: [] }; S.ri = -1; tRoutines(); }
+function rEditOpen(id) { const r = S.rt.find(x => x.id == id); if (!r) return; S.rd = { id, name: r.name, items: r.routine_items.map(i => ({ ...i })) }; S.ri = -1; tRoutines(); }
+function rBack() { if (S.rd && !confirm('Leave without saving your changes?')) return; S.rd = null; S.ra = null; S.ri = -1; tRoutines(); }
+async function rSaveRows(id, name, items) {
+  let rid = id;
+  const old = id ? checkErr(await sb.from('routine_items').select('id').eq('routine_id', id)).map(x => x.id) : [];
+  if (!rid) rid = checkErr(await sb.from('routines').insert({ name }).select().single()).id;
+  else checkErr(await sb.from('routines').update({ name }).eq('id', id));
+  if (items.length) checkErr(await sb.from('routine_items').insert(items.map((c, i) => ({ routine_id: rid, position: i, exercise: c.exercise, fields: c.fields || '', sets: c.sets || '', reps: c.reps || '', weight: c.weight || '', duration: c.duration || '', distance: c.distance || '', notes: c.notes || '' }))));
+  if (old.length) checkErr(await sb.from('routine_items').delete().in('id', old));
+  return rid;
+}
+async function rDup(id) { const r = S.rt.find(x => x.id == id); if (!r) return; await rSaveRows(null, r.name + ' (copy)', r.routine_items); S.rt = null; toast('Routine duplicated'); tRoutines(); }
+async function rRemove(id) { const r = S.rt.find(x => x.id == id); if (!r || !confirm('Delete "' + r.name + '"? Workouts already assigned to clients are not affected.')) return; checkErr(await sb.from('routines').delete().eq('id', id)); S.rt = null; tRoutines(); }
+
+const itemForm = p => `<div class="row"><select id="${p}g" onchange="exRefresh('${p}e')"><option value="">All groups</option>${[...new Set(S.ex.map(e => e.group))].map(x => `<option>${esc(x)}</option>`).join('')}</select><div class="cb" style="flex:2 1 160px"><input id="${p}e" autocomplete="off" role="combobox" aria-expanded="false" data-g="${p}g" data-l="${p}el" placeholder="Exercise (type to search)" oninput="exFilter(this);itemPre('${p}')" onfocus="exFocus(this)" onkeydown="exKey(event,this)" onchange="itemPre('${p}')"><div id="${p}el" class="cb-list" role="listbox" hidden></div></div></div>
+  <div class="mu gap">What should the client track?</div><div class="chips">${ORDER.map(k => `<label class="chip"><input type="checkbox" id="${p}f_${k}" onchange="itemTog('${p}')"> ${FD[k]}</label>`).join('')}</div>
+  <div class="fields">${ORDER.map(k => `<div id="${p}w_${k}" class="${UN[k] ? 'f2' : 'f1'}"><div class="mu">${FD[k]} target</div>${UN[k] ? `<div class="row u"><input id="${p}t_${k}" type="number" inputmode="decimal" step="any">${unitSel(k, `id="${p}u_${k}"`, UDEF[k])}</div>` : `<input id="${p}t_${k}">`}</div>`).join('')}</div>
+  <div class="mu gap">Rest between sets, in seconds (optional)</div><input id="${p}rest" type="number" inputmode="numeric" min="0" placeholder="e.g. 90"><input id="${p}n" placeholder="Notes for the client" style="margin-top:8px"><div class="gap"></div>`;
+function itemDl(p) { }
+function itemTog(p) { ORDER.forEach(k => { const w = $(p + 'w_' + k), c = $(p + 'f_' + k); if (w && c) w.style.display = c.checked ? '' : 'none'; }); }
+function itemPre(p) { const f = presetFor($(p + 'e').value); ORDER.forEach(k => { const c = $(p + 'f_' + k); if (c) c.checked = f.includes(k); }); itemTog(p); }
+function itemRead(p) {
+  const n = $(p + 'e').value.trim(); if (!n) { alert('Type the exercise name'); return null; }
+  const f = ORDER.filter(k => $(p + 'f_' + k).checked); if (!f.length) { alert('Choose at least one thing to track.'); return null; }
+  const it = { exercise: n, fields: f.join(','), notes: $(p + 'n').value.trim() };
+  ORDER.forEach(k => { const v = f.includes(k) ? $(p + 't_' + k).value.trim() : ''; it[k] = (UN[k] && v) ? v + ' ' + $(p + 'u_' + k).value : v; });
+  const rs0 = $(p + 'rest') ? $(p + 'rest').value.trim() : ''; if (rs0) it.notes = serializeRichPayload({ notes: it.notes, rest: rs0 + ' sec' }).notes;
+  return it;
+}
+function itemFill(p, it) {
+  const pr0 = it ? parseRichItem(it) : null; $(p + 'e').value = it ? it.exercise : ''; $(p + 'n').value = pr0 ? pr0.cleanNotes : ''; if ($(p + 'rest')) $(p + 'rest').value = pr0 ? (restSecs(pr0.rest) || '') : '';
+  const f = it ? fieldsOf(it) : presetFor('');
+  ORDER.forEach(k => { $(p + 'f_' + k).checked = f.includes(k); const v = it ? val(it, k, it) : ''; if (UN[k]) { const q = parseUV(k, v); $(p + 't_' + k).value = q.n; $(p + 'u_' + k).value = q.u; } else $(p + 't_' + k).value = v; });
+  itemTog(p); itemDl(p);
+}
+function rEdit() {
+  const d = S.rd, n = $('rn'); if (n) d.name = n.value;
+  const ed = S.ri >= 0;
+  set('tb', `<button class="g" onclick="rBack()">← All routines</button>
+  <div class="card"><h2>${d.id ? 'Edit routine' : 'New routine'}</h2><input id="rn" placeholder="Routine name (e.g. Push day)" value="${esc(d.name)}"></div>
+  <div class="card"><h2>Exercises (${d.items.length})</h2>${d.items.map((c, i) => `<div class="item"><div class="row"><div><b>${esc(c.exercise)}</b><div class="mu">${fmt(c, c) || 'No target'}${(() => { const pr = parseRichItem(c); return (pr.rest ? ' · Rest ' + esc(pr.rest) : '') + (pr.cleanNotes ? ' · ' + esc(pr.cleanNotes) : ''); })()}</div></div><button class="g sm" style="flex:0 0 auto" onclick="rMove(${i},-1)" aria-label="Move up">↑</button><button class="g sm" style="flex:0 0 auto" onclick="rMove(${i},1)" aria-label="Move down">↓</button><button class="g sm" style="flex:0 0 auto" onclick="rItemEdit(${i})">Edit</button><button class="d sm" style="flex:0 0 auto" onclick="rItemDel(${i})">Remove</button></div></div>`).join('') || '<p class="mu">No exercises yet. Add the first one below.</p>'}</div>
+  <div class="card" id="rform"><h2>${ed ? 'Edit exercise' : 'Add exercise'}</h2>${itemForm('r')}<div class="row"><button onclick="rItemSave()">${ed ? 'Update exercise' : 'Add exercise'}</button>${ed ? '<button class="g" onclick="S.ri=-1;rEdit()">Cancel</button>' : ''}</div></div>
+  <div class="card"><button onclick="rSave()">Save routine</button></div>`);
+  itemFill('r', ed ? d.items[S.ri] : null);
+}
+function rItemSave() { const it = itemRead('r'); if (!it) return; if (S.ri >= 0) { S.rd.items[S.ri] = { ...S.rd.items[S.ri], ...it }; S.ri = -1; } else S.rd.items.push(it); rEdit(); }
+function rItemEdit(i) { S.ri = i; rEdit(); $('rform').scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+function rItemDel(i) { S.rd.items.splice(i, 1); S.ri = -1; rEdit(); }
+function rMove(i, d) { const a = S.rd.items, j = i + d; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; S.ri = -1; rEdit(); }
+async function rSave() {
+  const d = S.rd; d.name = ($('rn').value || '').trim();
+  if (!d.name) { alert('Name the routine first'); return; }
+  if (!d.items.length) { alert('Add at least one exercise'); return; }
+  if ($('re').value.trim() && !confirm('You typed an exercise but did not add it. Save without it?')) return;
+  await rSaveRows(d.id, d.name, d.items);
+  S.rd = null; S.ri = -1; S.rt = null; toast('Routine saved'); tRoutines();
+}
+function rAssignOpen(id) { S.ra = id; S.raSel = []; tRoutines(); }
+function raFilter() {
+  const q = ($('racq').value || '').toLowerCase().trim(), l = $('raclist'), sw = c => c.name.toLowerCase().startsWith(q) ? 1 : 0;
+  const m = S.cl.filter(c => !S.raSel.includes(c.id) && (!q || (c.name + ' ' + c.username).toLowerCase().includes(q))).sort((a, b) => sw(b) - sw(a) || a.name.localeCompare(b.name));
+  S.raHit = m.slice(0, 8); S.raAll = m.map(c => c.id); S.raI = 0; l.hidden = false; $('racq').setAttribute('aria-expanded', 'true');
+  l.innerHTML = (q && m.length > 1 ? `<button type="button" class="cb-o" onclick="raAddAll()"><b>Add all ${m.length} matches</b></button>` : '')
+    + (S.raHit.map((c, i) => `<button type="button" class="cb-o ${i ? '' : 'on'}" role="option" onclick="raAdd('${c.id}')">${esc(c.name)}<span>@${esc(c.username)}</span></button>`).join('') || `<div class="cb-n">${S.raSel.length && S.raSel.length == S.cl.length ? 'All clients selected' : 'No clients match'}</div>`)
+    + (m.length > 8 ? `<div class="cb-n">+${m.length - 8} more · keep typing to narrow</div>` : '');
+}
+function raKey(e) {
+  const o = [...document.querySelectorAll('#raclist [role=option]')];
+  if (e.key == 'ArrowDown' || e.key == 'ArrowUp') { e.preventDefault(); if ($('raclist').hidden) return raFilter(); if (!o.length) return; S.raI = (S.raI + (e.key == 'ArrowDown' ? 1 : -1) + o.length) % o.length; o.forEach((b, i) => b.classList.toggle('on', i == S.raI)); o[S.raI].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key == 'Enter') { e.preventDefault(); if (S.raHit && S.raHit[S.raI] && !$('raclist').hidden) raAdd(S.raHit[S.raI].id); }
+  else if (e.key == 'Escape') { $('raclist').hidden = true; }
+}
+function raAdd(id) { if (!S.raSel.includes(id)) S.raSel.push(id); $('racq').value = ''; raChips(); raFilter(); $('racq').focus(); }
+function raAddAll() { (S.raAll || []).forEach(id => { if (!S.raSel.includes(id)) S.raSel.push(id); }); $('racq').value = ''; raChips(); raFilter(); }
+function raDel(id) { S.raSel = S.raSel.filter(x => x !== id); raChips(); if (!$('raclist').hidden) raFilter(); }
+function raChips() {
+  const b = $('racs'); if (!b) return;
+  b.innerHTML = S.raSel.length ? S.raSel.map(id => { const c = S.cl.find(x => x.id == id); return c ? `<span class="rsel">${esc(c.name)}<button type="button" aria-label="Remove ${esc(c.name)}" onclick="raDel('${id}')">×</button></span>` : ''; }).join('') : '<span class="mu">No clients selected yet.</span>';
+}
+document.addEventListener('click', e => { const l = $('raclist'), q = $('racq'); if (l && !l.hidden && q && !e.composedPath().includes(q.parentNode)) l.hidden = true; });
+function rAssign() {
+  const r = S.rt.find(x => x.id == S.ra); if (!r) { S.ra = null; return tRoutines(); }
+  set('tb', `<button class="g" onclick="rBack()">← All routines</button><div class="card"><h2>Assign ${esc(r.name)}</h2><div class="mu">${r.routine_items.length} exercises</div>
+  <div class="mu gap">Clients</div>${S.cl.length ? `<div class="cb"><input id="racq" type="search" role="combobox" aria-expanded="false" aria-controls="raclist" autocomplete="off" placeholder="Search clients by name…" oninput="raFilter()" onfocus="raFocus(this)" onkeydown="raKey(event)"><div id="raclist" class="cb-list" role="listbox" hidden></div></div><div class="chips" id="racs"></div>` : '<span class="mu">Add a client first.</span>'}
+  <div class="mu gap">Program name shown to the client</div><input id="rapn" value="${esc(r.name)}">
+  <div class="row gap"><div><div class="mu">Start date</div><input type="date" id="rad" value="${S.date}"></div><div><div class="mu">Repeat weekly</div><select id="rarp">${[1, 2, 3, 4, 6, 8].map(n => `<option value="${n}">${n == 1 ? 'Once' : n + ' weeks'}</option>`).join('')}</select></div></div>
+  <div class="gap"></div><button onclick="rAssignGo()">Assign routine</button></div>`);
+  raChips();
+}
+async function rAssignGo() {
+  const r = S.rt.find(x => x.id == S.ra), ids = (S.raSel || []).slice(), d0 = $('rad').value, wk = +$('rarp').value;
+  if (!ids.length) { alert('Pick at least one client'); return; } if (!d0) { alert('Pick a date'); return; }
+  const dates = [...Array(wk)].map((_, i) => { const d = new Date(d0 + 'T00:00:00'); d.setDate(d.getDate() + 7 * i); return d.toLocaleDateString('en-CA'); });
+  const pn = $('rapn') ? $('rapn').value.trim() : '';
+  let n = 0; for (const cid of ids) n += (await api('assign', { clientId: cid, dates, items: r.routine_items })).n;
+  if (pn) { try { const rows = []; ids.forEach(cid => dates.forEach(date => rows.push({ client_id: cid, date, program_name: pn }))); checkErr(await sb.from('client_day_meta').upsert(rows, { onConflict: 'client_id,date' })); } catch (e) { toast('Assigned, but the program name could not be saved'); } }
+  S.ra = null; toast(n + ' workout entries assigned'); tRoutines();
+}
+
+/* ---------- Food Diary (Client & Coach/Admin) ---------- */
+const MEALS = ['Breakfast', 'Lunch', 'Dinner', 'Snack', 'Supplement'];
+async function ensureFoods() {
+  if (!S.foods.length) {
+    try { S.foods = (await api('foods')).foods || []; } catch (_) { S.foods = []; }
+  }
+}
+function scaleFood(food, mult) {
+  const m = num(mult) > 0 ? num(mult) : 1;
+  return {
+    serving: food ? (food.serving || '') : '',
+    protein: r1(num(food && food.protein) * m),
+    carbs: r1(num(food && food.carbs) * m),
+    sugar: r1(num(food && food.sugar) * m),
+    fat: r1(num(food && food.fat) * m),
+    calories: r1(num(food && food.calories) * m)
+  };
+}
+function onFoodPick() {
+  const inp = $('fd_name'); if (!inp) return;
+  const q = inp.value.trim().toLowerCase();
+  const hit = S.foods.find(f => f.name.toLowerCase() === q);
+  if (!hit) return;
+  const mult = num($('fd_serv') ? $('fd_serv').value : 1) || 1;
+  const sc = scaleFood(hit, mult);
+  if ($('fd_unit')) $('fd_unit').value = sc.serving;
+  if ($('fd_pro')) $('fd_pro').value = sc.protein;
+  if ($('fd_carb')) $('fd_carb').value = sc.carbs;
+  if ($('fd_sug')) $('fd_sug').value = sc.sugar;
+  if ($('fd_fat')) $('fd_fat').value = sc.fat;
+  if ($('fd_cal')) $('fd_cal').value = sc.calories;
+}
+function onServChange() {
+  const inp = $('fd_name'); if (!inp) return;
+  const q = inp.value.trim().toLowerCase();
+  const hit = S.foods.find(f => f.name.toLowerCase() === q);
+  if (hit) onFoodPick();
+}
+async function addFoodEntry(targetClientId) {
+  const name = ($('fd_name') ? $('fd_name').value : '').trim();
+  if (!name) { alert('Enter or select a food item'); return; }
+  const serv = num($('fd_serv') ? $('fd_serv').value : 1) || 1;
+  const payload = {
+    clientId: targetClientId,
+    date: $('fd_date') ? $('fd_date').value : S.foodDate,
+    meal: $('fd_meal') ? $('fd_meal').value : S.foodMeal,
+    food_name: name,
+    serving: $('fd_unit') ? $('fd_unit').value.trim() : '',
+    servings: serv,
+    protein: num($('fd_pro') ? $('fd_pro').value : 0),
+    carbs: num($('fd_carb') ? $('fd_carb').value : 0),
+    sugar: num($('fd_sug') ? $('fd_sug').value : 0),
+    fat: num($('fd_fat') ? $('fd_fat').value : 0),
+    calories: num($('fd_cal') ? $('fd_cal').value : 0),
+    notes: $('fd_note') ? $('fd_note').value.trim() : ''
+  };
+  const btn = $('fd_add_btn'); if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    await api('addFoodLog', payload);
+    toast('Food logged');
+    if (S.u.role === 'client') await loadClientFood();
+    else await loadAdminFood();
+  } catch (e) {
+    alert(e.message || 'Could not save food entry');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Log food'; }
+  }
+}
+async function delFoodEntry(id, isAdmin) {
+  if (!confirm('Remove this food entry?')) return;
+  await api('delFoodLog', { id });
+  toast('Removed');
+  if (isAdmin) await loadAdminFood();
+  else await loadClientFood();
+}
+function foodTotals(list) {
+  return (list || []).reduce((acc, x) => {
+    acc.calories += num(x.calories);
+    acc.protein += num(x.protein);
+    acc.carbs += num(x.carbs);
+    acc.fat += num(x.fat);
+    acc.sugar += num(x.sugar);
+    return acc;
+  }, { calories: 0, protein: 0, carbs: 0, fat: 0, sugar: 0 });
+}
+async function loadRecentFoods(cid) {
+  try {
+    const rows = checkErr(await sb.from('food_logs').select('food_name,serving,servings,protein,carbs,sugar,fat,calories,date').eq('client_id', cid).gte('date', shiftDate(today(), -21)).order('date', { ascending: false }).limit(300)) || [];
+    const m = new Map();
+    rows.forEach(x => { const k = [x.food_name, x.serving, x.servings].join('|').toLowerCase(); const e = m.get(k); if (e) e.n++; else m.set(k, { x, n: 1 }); });
+    S.recentFoods = [...m.values()].sort((a, b) => b.n - a.n).slice(0, 8).map(e => e.x);
+  } catch (e) { S.recentFoods = []; }
+}
+async function quickLog(cid, i) {
+  const x = (S.recentFoods || [])[i]; if (!x) return;
+  document.querySelectorAll('#fd_recent button').forEach(b => b.disabled = true);
+  try {
+    await api('addFoodLog', { clientId: cid, date: $('fd_date') ? $('fd_date').value : S.foodDate, meal: $('fd_meal') ? $('fd_meal').value : S.foodMeal, food_name: x.food_name, serving: x.serving || '', servings: x.servings, protein: x.protein, carbs: x.carbs, sugar: x.sugar, fat: x.fat, calories: x.calories, notes: '' });
+    toast(x.food_name + ' logged');
+    if (S.u.role === 'client') await loadClientFood(); else await loadAdminFood();
+  } catch (e) {
+    alert(e.message || 'Could not save food entry');
+    document.querySelectorAll('#fd_recent button').forEach(b => b.disabled = false);
+  }
+}
+function foodDiaryHtml(targetClientId, dateVal, mealVal, logs, isAdmin) {
+  const tot = foodTotals(logs);
+  const recentHtml = (S.recentFoods || []).length ? `<div class="mu">Recent foods · tap to log again under the selected meal</div><div class="chips" id="fd_recent">${S.recentFoods.map((x, i) => `<button type="button" class="rf" onclick="quickLog('${targetClientId}', ${i})"><b>${esc(x.food_name)}</b><span>${Math.round(num(x.calories))} kcal</span></button>`).join('')}</div>` : '';
+  const grouped = {};
+  MEALS.forEach(m => { grouped[m] = []; });
+  (logs || []).forEach(x => {
+    const m = MEALS.includes(x.meal) ? x.meal : 'Snack';
+    grouped[m].push(x);
+  });
+
+  const sections = MEALS.map(m => {
+    const arr = grouped[m];
+    if (!arr.length) return '';
+    const mt = foodTotals(arr);
+    return `<div class="card">
+      <div class="row" style="margin-bottom:8px"><b>${esc(m)}</b><span class="mu">${r1(mt.calories)} kcal · P ${r1(mt.protein)}g · C ${r1(mt.carbs)}g · F ${r1(mt.fat)}g</span></div>
+      ${arr.map(x => `<div class="item">
+        <div class="row">
+          <div>
+            <b>${esc(x.food_name)}</b> <span class="mu">× ${esc(x.servings)}${x.serving ? ' (' + esc(x.serving) + ')' : ''}</span>
+            <div class="mu">${r1(x.calories)} kcal · Protein ${r1(x.protein)}g · Carbs ${r1(x.carbs)}g · Fat ${r1(x.fat)}g${num(x.sugar) ? ' · Sugar ' + r1(x.sugar) + 'g' : ''}${x.notes ? ' · ' + esc(x.notes) : ''}</div>
+          </div>
+          <button class="d sm" style="flex:0 0 auto" onclick="delFoodEntry('${x.id}', ${isAdmin ? 'true' : 'false'})">Delete</button>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  }).join('');
+
+  return `
+    <div class="card">
+      <h2>Daily Food Summary</h2>
+      <div class="row u"><button class="g sm" aria-label="Previous day" onclick="foodDay(-1, ${isAdmin ? 'true' : 'false'})">‹</button><input type="date" id="fd_date" value="${esc(dateVal)}" onchange="${isAdmin ? 'S.foodDate=this.value;loadAdminFood()' : 'S.foodDate=this.value;loadClientFood()'}"><button class="g sm" aria-label="Next day" onclick="foodDay(1, ${isAdmin ? 'true' : 'false'})">›</button></div>
+      ${(() => {
+        if (!S.macroProf) return '';
+        const t = Calc.computeTargets(S.macroProf, S.weighIns, S.foodByDate);
+        return `<div class="mu" style="margin-bottom:6px">Targets: <b>${t.calories} kcal</b> · P <b>${t.protein}g</b> · C <b>${t.carbs}g</b> · F <b>${t.fat}g</b></div><div class="bar" style="margin-bottom:6px"><i style="width:${Math.min(100, Math.round(tot.calories / Math.max(1, t.calories) * 100))}%"></i></div>`;
+      })()}
+      <div class="stats">
+        <div><b>${Math.round(tot.calories)}</b><div class="mu">Calories</div></div>
+        <div><b>${r1(tot.protein)}g</b><div class="mu">Protein</div></div>
+        <div><b>${r1(tot.carbs)}g</b><div class="mu">Carbs</div></div>
+        <div><b>${r1(tot.fat)}g</b><div class="mu">Fat</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Add Food</h2>
+      <div class="subtabs" id="fd_mealbar">${MEALS.map(m => `<button class="${mealVal === m ? 'on' : ''}" onclick="pickMeal('${m}')">${m}</button>`).join('')}</div>
+      <select id="fd_meal" style="display:none" aria-hidden="true">${MEALS.map(m => `<option value="${m}" ${mealVal === m ? 'selected' : ''}>${m}</option>`).join('')}</select>
+      ${recentHtml}<input id="fd_name" list="fd_list" placeholder="Search food library or type custom food" oninput="onFoodPick()" onchange="onFoodPick()">
+      <datalist id="fd_list">${S.foods.map(f => `<option value="${esc(f.name)}">${esc(f.calories || 0)} kcal · ${esc(f.serving || '')}</option>`).join('')}</datalist>
+      <div class="fields">
+        <div class="f1"><div class="mu">Servings</div><input id="fd_serv" type="number" inputmode="decimal" step="any" value="1" oninput="onServChange()"></div>
+        <div class="f1"><div class="mu">Calories</div><input id="fd_cal" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+      </div>
+      <details class="more"><summary>Protein, carbs, fat &amp; more</summary><div class="fields">
+        <div class="f2"><div class="mu">Serving unit</div><input id="fd_unit" placeholder="e.g. 100g, 1 cup, 1 bowl"></div>
+        <div class="f1"><div class="mu">Protein (g)</div><input id="fd_pro" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+        <div class="f1"><div class="mu">Carbs (g)</div><input id="fd_carb" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+        <div class="f1"><div class="mu">Fat (g)</div><input id="fd_fat" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+        <div class="f1"><div class="mu">Sugar (g)</div><input id="fd_sug" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+      </div>
+      <input id="fd_note" placeholder="Optional note (portion details, restaurant, time)"></details>
+      <div class="gap"></div>
+      <button id="fd_add_btn" onclick="addFoodEntry('${targetClientId}')">Log food</button>
+    </div>
+
+    <div id="fd_meals">${sections || '<p class="mu">No food logged for this date yet.</p>'}</div>
+  `;
+}
+
+async function loadClientFood() {
+  S.foodDate = S.foodDate || today();
+  set('tb', '<div class="skel"></div><div class="skel" style="height:180px"></div>');
+  await Promise.all([ensureFoods(), loadRecentFoods(S.u.id)]);
+  const r = await api('getFoodLogs', { date: S.foodDate });
+  S.foodLogs = r.items || [];
+  if (S.u.role === 'client' && S.cTab === 'food') {
+    set('tb', foodDiaryHtml(S.u.id, S.foodDate, S.foodMeal, S.foodLogs, false));
+  }
+}
+
+function tFood() {
+  if (!S.cl.length) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  set('tb', `<div class="card"><div class="row"><select id="fc" onchange="loadAdminFood()">${opts()}</select><input type="date" id="fd_top_date" value="${S.foodDate || today()}" onchange="S.foodDate=this.value;loadAdminFood()"></div></div><div id="fd_body"><div class="skel"></div></div>`);
+  if (S.cid && S.cl.some(c => c.id == S.cid)) $('fc').value = S.cid;
+  loadAdminFood();
+}
+
+async function loadAdminFood() {
+  const fc = $('fc');
+  const cid = fc ? fc.value : S.cid;
+  if (!cid) return;
+  S.cid = cid;
+  const topDt = $('fd_top_date');
+  const d = (topDt && topDt.value) ? topDt.value : (S.foodDate || today());
+  S.foodDate = d;
+  const rq = S.frq = (S.frq || 0) + 1;
+  await Promise.all([ensureFoods(), loadRecentFoods(cid)]);
+  const r = await api('getFoodLogs', { clientId: cid, date: d });
+  if (rq !== S.frq || !$('fd_body')) return;
+  S.foodLogs = r.items || [];
+  set('fd_body', foodDiaryHtml(cid, d, S.foodMeal, S.foodLogs, true));
+}
+
+
+/* ---------- Body Fat % & Adaptive Macro/TDEE Calculator ---------- */
+const Calc = {
+  toKg(w, units) {
+    const x = num(w);
+    if (!x) return 0;
+    return units === 'imperial' ? x * 0.45359237 : x;
+  },
+  fromKg(kg, units) {
+    const x = num(kg);
+    if (!x) return 0;
+    return units === 'imperial' ? x / 0.45359237 : x;
+  },
+  toCm(v, units) {
+    const x = num(v);
+    if (!x) return 0;
+    return units === 'imperial' ? x * 2.54 : x;
+  },
+  navyBF({ sex, units, height, waist, neck, hip }) {
+    const h = this.toCm(height, units);
+    const w = this.toCm(waist, units);
+    const n = this.toCm(neck, units);
+    const hp = this.toCm(hip, units);
+    if (!h || !w || !n) return null;
+    if (sex === 'female') {
+      if (!hp || (w + hp - n) <= 0) return null;
+      const bf = 495 / (1.29579 - 0.35004 * Math.log10(w + hp - n) + 0.22100 * Math.log10(h)) - 450;
+      return Math.max(4, Math.min(60, Math.round(bf * 10) / 10));
+    } else {
+      if ((w - n) <= 0) return null;
+      const bf = 86.010 * Math.log10(w - n) - 70.041 * Math.log10(h) + 36.76;
+      return Math.max(3, Math.min(55, Math.round(bf * 10) / 10));
+    }
+  },
+  katchBMR(weightKg, bfPct) {
+    if (!weightKg) return 0;
+    if (bfPct && bfPct > 0 && bfPct < 70) {
+      const lbmKg = weightKg * (1 - bfPct / 100);
+      return 370 + 21.6 * lbmKg;
+    }
+    return 10 * weightKg + 625;
+  },
+  defaultActivityMult(sex) {
+    return sex === 'female' ? 1.55 : 1.5;
+  },
+  recommendGoal({ sex, experience, bfPct }) {
+    const exp = (experience || 'beginner').toLowerCase();
+    const isFem = sex === 'female';
+    const bf = num(bfPct);
+    if (bf > 0) {
+      if (!isFem) {
+        if (bf >= 22) return { goal: 'cut', phase: 'phase1', reason: 'Body fat is 22%+; a controlled deficit prioritizes fat loss first.' };
+        if (bf <= 12) return { goal: 'bulk', phase: 'lean', reason: 'Body fat is lean (<=12%); ideal range for a controlled lean surplus.' };
+      } else {
+        if (bf >= 30) return { goal: 'cut', phase: 'phase1', reason: 'Body fat is 30%+; a controlled deficit prioritizes fat loss first.' };
+        if (bf <= 20) return { goal: 'bulk', phase: 'lean', reason: 'Body fat is lean (<=20%); ideal range for a controlled lean surplus.' };
+      }
+    }
+    if (exp === 'beginner') {
+      return { goal: 'recomp', phase: 'phase1', reason: 'Beginner training stage supports simultaneous muscle gain and body recomposition.' };
+    }
+    return { goal: 'maintain', phase: 'phase1', reason: 'Intermediate baseline maintenance to establish true TDEE before pushing surplus/deficit.' };
+  },
+  computeAdaptiveTDEE(weighIns, foodLogsByDate, units) {
+    if (!Array.isArray(weighIns) || weighIns.length < 2) return null;
+    const sorted = [...weighIns].filter(w => w.date && num(w.weight) > 0).sort((a, b) => a.date.localeCompare(b.date));
+    if (sorted.length < 2) return null;
+    const first = sorted[0];
+    const last = sorted[sorted.length - 1];
+    const d1 = new Date(first.date + 'T00:00:00');
+    const d2 = new Date(last.date + 'T00:00:00');
+    const days = Math.max(1, Math.round((d2 - d1) / 86400000));
+    const kcalPerKg = units === 'imperial' ? (7700 / 0.45359237) : 7700;
+    const dwKg = this.toKg(last.weight, units) - this.toKg(first.weight, units);
+    const weightKcalDelta = dwKg * kcalPerKg;
+
+    let totalIntake = 0;
+    let loggedDays = 0;
+    if (foodLogsByDate) {
+      Object.entries(foodLogsByDate).forEach(([dt, items]) => {
+        if (dt >= first.date && dt <= last.date && Array.isArray(items) && items.length) {
+          totalIntake += items.reduce((s, x) => s + num(x.calories), 0);
+          loggedDays++;
+        }
+      });
+    }
+    if (!loggedDays) return null;
+    const avgDailyIntake = totalIntake / loggedDays;
+    const avgDailyWeightKcal = weightKcalDelta / days;
+    const adaptiveTdee = Math.round(avgDailyIntake - avgDailyWeightKcal);
+    const weeklyChangeDisplay = Math.round(this.fromKg((dwKg / days) * 7, units) * 100) / 100;
+    return {
+      adaptiveTdee: Math.max(1000, adaptiveTdee),
+      avgDailyIntake: Math.round(avgDailyIntake),
+      loggedDays,
+      spanDays: days,
+      weeklyChangeDisplay,
+      unitLabel: units === 'imperial' ? 'lb/wk' : 'kg/wk'
+    };
+  },
+  computeTargets(prof, weighIns, foodLogsByDate) {
+    const p = prof || {};
+    const units = p.units === 'imperial' ? 'imperial' : 'metric';
+    const sex = p.sex === 'female' ? 'female' : 'male';
+    const experience = p.experience || 'beginner';
+    const latestW = (weighIns && weighIns.length) ? num(weighIns[0].weight) : num(p.start_weight);
+    const calcBf = this.navyBF({
+      sex,
+      units,
+      height: p.height,
+      waist: (weighIns && weighIns[0] && num(weighIns[0].waist)) ? weighIns[0].waist : p.waist,
+      neck: (weighIns && weighIns[0] && num(weighIns[0].neck)) ? weighIns[0].neck : p.neck,
+      hip: (weighIns && weighIns[0] && num(weighIns[0].hip)) ? weighIns[0].hip : p.hip
+    });
+    const latestBf = calcBf !== null ? calcBf : ((weighIns && weighIns[0] && num(weighIns[0].bf_pct)) ? num(weighIns[0].bf_pct) : num(p.start_bf));
+    const weightKg = this.toKg(latestW, units);
+    const bmr = Math.round(this.katchBMR(weightKg, latestBf));
+    const actMult = num(p.activity_mult) > 0 ? num(p.activity_mult) : this.defaultActivityMult(sex);
+    const formulaTdee = Math.round(bmr * actMult);
+    const adaptive = this.computeAdaptiveTDEE(weighIns, foodLogsByDate, units);
+    const baseTdee = adaptive ? adaptive.adaptiveTdee : formulaTdee;
+
+    const goal = p.goal || 'cut';
+    const phase = p.phase || 'phase1';
+    let goalAdj = 0;
+    if (goal === 'cut') goalAdj = phase === 'aggressive' ? -600 : -400;
+    else if (goal === 'bulk') goalAdj = phase === 'lean' ? 250 : 400;
+    else if (goal === 'recomp') goalAdj = -150;
+
+    const minFloor = sex === 'female' ? 1200 : 1500;
+    const rawCal = baseTdee ? Math.max(minFloor, baseTdee + goalAdj) : 2000;
+    const calories = num(p.custom_calories) > 0 ? Math.round(num(p.custom_calories)) : Math.round(rawCal);
+
+    // Protein grams per kg of body weight (or LBM when available)
+    const lbmKg = (weightKg > 0 && latestBf > 0 && latestBf < 70) ? weightKg * (1 - latestBf / 100) : weightKg;
+    let proPerKg = goal === 'cut' ? 2.0 : (goal === 'bulk' ? 1.8 : 1.9);
+    if (sex === 'female' && goal === 'cut') proPerKg = 1.9;
+    const refMassKg = lbmKg > 0 ? lbmKg : weightKg;
+    const protein = num(p.custom_protein) > 0 ? r1(num(p.custom_protein)) : Math.max(60, Math.round(refMassKg * proPerKg));
+
+    const fatPct = goal === 'cut' ? 0.25 : (goal === 'bulk' ? 0.24 : 0.26);
+    const fat = num(p.custom_fat) > 0 ? r1(num(p.custom_fat)) : Math.max(35, Math.round((calories * fatPct) / 9));
+
+    const remKcal = Math.max(0, calories - protein * 4 - fat * 9);
+    const carbs = num(p.custom_carbs) > 0 ? r1(num(p.custom_carbs)) : Math.round(remKcal / 4);
+
+    return {
+      units,
+      sex,
+      latestW,
+      latestBf,
+      bmr,
+      actMult,
+      formulaTdee,
+      adaptive,
+      baseTdee,
+      calories,
+      protein,
+      carbs,
+      fat,
+      suggestion: this.recommendGoal({ sex, experience, bfPct: latestBf })
+    };
+  }
+};
+
+async function loadMacroData(clientId) {
+  const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? clientId : S.u.id;
+  const [pRes, wRes, fRes] = await Promise.all([
+    sb.from('client_macro_profiles').select('*').eq('client_id', cid).maybeSingle(),
+    sb.from('client_weigh_ins').select('*').eq('client_id', cid).order('date', { ascending: false }).limit(500),
+    sb.from('food_logs').select('date, calories').eq('client_id', cid).gte('date', new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10)).limit(5000)
+  ]);
+  const prof = checkErr(pRes);
+  const weighIns = checkErr(wRes) || [];
+  const fRows = checkErr(fRes) || [];
+  const foodByDate = {};
+  fRows.forEach(x => {
+    if (!foodByDate[x.date]) foodByDate[x.date] = [];
+    foodByDate[x.date].push(x);
+  });
+  return { prof: prof || { client_id: cid, units: 'metric', sex: 'male', experience: 'beginner', goal: 'cut', phase: 'phase1', activity_mult: 1.5 }, weighIns, foodByDate };
+}
+
+function readMacroForm(cid, existingProf) {
+  const g = id => ($(id) ? $(id).value : '');
+  const gn = id => { const v = g(id).trim(); return v === '' ? null : num(v); };
+  const gc = (id, k) => $(id) ? gn(id) : (existingProf && existingProf[k] != null ? existingProf[k] : null);
+  const units = g('mc_units') || 'metric';
+  const sex = g('mc_sex') || 'male';
+  const height = gn('mc_height');
+  const waist = gn('mc_waist');
+  const neck = gn('mc_neck');
+  const hip = gn('mc_hip');
+  const startWeight = gn('mc_weight');
+  const autoBf = Calc.navyBF({ sex, units, height, waist, neck, hip });
+  const manualBf = gn('mc_bf');
+  return {
+    client_id: cid,
+    units,
+    sex,
+    experience: g('mc_exp') || 'beginner',
+    goal: g('mc_goal') || 'cut',
+    phase: g('mc_phase') || 'phase1',
+    height,
+    waist,
+    neck,
+    hip,
+    start_weight: startWeight,
+    start_bf: manualBf !== null ? manualBf : autoBf,
+    activity_mult: gn('mc_act') || Calc.defaultActivityMult(sex),
+    custom_calories: gc('mc_c_cal', 'custom_calories'),
+    custom_protein: gc('mc_c_pro', 'custom_protein'),
+    custom_carbs: gc('mc_c_carb', 'custom_carbs'),
+    custom_fat: gc('mc_c_fat', 'custom_fat'),
+    updated_at: new Date().toISOString()
+  };
+}
+
+function refreshMacroPreview() {
+  const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? ($('mc_client') ? $('mc_client').value : S.cid) : S.u.id;
+  const prof = readMacroForm(cid, S.macroProf);
+  const wList = [...(S.weighIns || [])];
+  if (num(prof.start_weight) > 0 && (!wList.length || wList[0].date !== today())) {
+    wList.unshift({ date: today(), weight: prof.start_weight, waist: prof.waist, neck: prof.neck, hip: prof.hip, bf_pct: prof.start_bf });
+  }
+  const res = Calc.computeTargets(prof, wList, S.foodByDate);
+  if ($('mc_bf') && res.latestBf > 0 && document.activeElement !== $('mc_bf')) {
+    const autoBf = Calc.navyBF(prof);
+    if (autoBf !== null) $('mc_bf').value = autoBf;
+  }
+  const out = $('mc_summary_box');
+  if (out) out.innerHTML = renderMacroSummaryCards(res);
+}
+
+function applySuggestedGoal() {
+  const cid = (S.u.role === 'admin' || S.u.role === 'coach') ? ($('mc_client') ? $('mc_client').value : S.cid) : S.u.id;
+  const prof = readMacroForm(cid, S.macroProf);
+  const bf = Calc.navyBF(prof) ?? num(prof.start_bf);
+  const sug = Calc.recommendGoal({ sex: prof.sex, experience: prof.experience, bfPct: bf });
+  if ($('mc_goal')) $('mc_goal').value = sug.goal;
+  if ($('mc_phase')) $('mc_phase').value = sug.phase;
+  refreshMacroPreview();
+  toast('Applied recommended goal: ' + sug.goal);
+}
+
+function renderMacroSummaryCards(res) {
+  const uW = res.units === 'imperial' ? 'lb' : 'kg';
+  return `
+    <div class="stats">
+      <div><b>${res.latestBf > 0 ? res.latestBf + '%' : '—'}</b><div class="mu">Est. Body Fat</div></div>
+      <div><b>${res.bmr || '—'}</b><div class="mu">BMR (kcal)</div></div>
+      <div><b>${res.baseTdee || '—'}</b><div class="mu">${res.adaptive ? 'Adaptive TDEE' : 'Est. TDEE'}</div></div>
+      <div><b>${res.calories}</b><div class="mu">Target kcal</div></div>
+    </div>
+    <div class="chips" style="margin-top:12px;margin-bottom:4px">
+      <span class="chip stat"><span class="mu">Protein</span> <b>${res.protein}g</b></span>
+      <span class="chip stat"><span class="mu">Carbs</span> <b>${res.carbs}g</b></span>
+      <span class="chip stat"><span class="mu">Fat</span> <b>${res.fat}g</b></span>
+      ${res.latestW > 0 ? `<span class="chip stat"><span class="mu">Current Weight</span> <b>${r1(res.latestW)} ${uW}</b></span>` : ''}
+    </div>
+    <div class="mu" style="margin-top:6px">
+      ${res.adaptive
+        ? `Adaptive TDEE from ${res.adaptive.loggedDays} logged food days over ${res.adaptive.spanDays}d (trend: ${res.adaptive.weeklyChangeDisplay > 0 ? '+' : ''}${res.adaptive.weeklyChangeDisplay} ${res.adaptive.unitLabel}, avg intake ${res.adaptive.avgDailyIntake} kcal/day). Formula TDEE: ${res.formulaTdee} kcal.`
+        : `Estimated from BMR (${res.bmr} kcal) × ${res.actMult} activity factor (${res.formulaTdee} kcal). Log daily food & weigh-ins to unlock adaptive TDEE.`}
+    </div>
+    <div class="mu" style="margin-top:4px"><b>Goal Guidance:</b> ${esc(res.suggestion.reason)}</div>
+  `;
+}
+
+async function saveMacroProfile(cid) {
+  const btn = $('mc_save_btn'); if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    const payload = readMacroForm(cid, S.macroProf);
+    const oldU = S.macroProf && S.macroProf.units;
+    if (oldU && oldU !== payload.units && (S.weighIns || []).length) {
+      const k = payload.units == 'imperial' ? 1 : -1, cw = v => v == null ? null : r1(num(v) * Math.pow(2.20462, k)), cl = v => v == null ? null : r1(num(v) * Math.pow(2.54, -k));
+      checkErr(await sb.from('client_weigh_ins').upsert(S.weighIns.map(x => ({ id: x.id, client_id: x.client_id, date: x.date, weight: cw(x.weight), waist: cl(x.waist), neck: cl(x.neck), hip: cl(x.hip), bf_pct: x.bf_pct, notes: x.notes })), { onConflict: 'id' }));
+    }
+    checkErr(await sb.from('client_macro_profiles').upsert(payload, { onConflict: 'client_id' }));
+    S.macroProf = Object.assign({}, S.macroProf, payload);
+    if (num(payload.start_weight) > 0) {
+      await logWeighInInternal(cid, today(), payload.start_weight, payload.waist, payload.neck, payload.hip, payload.start_bf, 'Profile check-in');
+    }
+    toast('Macro profile saved');
+    await renderMacroView(cid, S.u.role !== 'client');
+  } catch (e) {
+    alert(e.message || 'Could not save macro profile');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Save profile & targets'; }
+  }
+}
+
+async function logWeighInInternal(cid, date, weight, waist, neck, hip, bfPct, notes) {
+  const prof = S.macroProf || {};
+  const computedBf = (bfPct !== null && bfPct !== undefined && num(bfPct) > 0)
+    ? num(bfPct)
+    : Calc.navyBF({
+        sex: prof.sex || 'male',
+        units: prof.units || 'metric',
+        height: prof.height,
+        waist: waist || prof.waist,
+        neck: neck || prof.neck,
+        hip: hip || prof.hip
+      });
+  checkErr(await sb.from('client_weigh_ins').upsert({
+    client_id: cid,
+    date: date || today(),
+    weight: num(weight),
+    waist: waist ? num(waist) : null,
+    neck: neck ? num(neck) : null,
+    hip: hip ? num(hip) : null,
+    bf_pct: computedBf,
+    notes: notes || ''
+  }, { onConflict: 'client_id,date' }));
+}
+
+async function addWeighInEntry(cid, isAdmin) {
+  const dt = ($('wi_date') ? $('wi_date').value : '') || today();
+  const w = num($('wi_weight') ? $('wi_weight').value : 0);
+  if (!w) { alert('Enter a weight value'); return; }
+  const waist = $('wi_waist') && $('wi_waist').value.trim() ? num($('wi_waist').value) : null;
+  const neck = $('wi_neck') && $('wi_neck').value.trim() ? num($('wi_neck').value) : null;
+  const hip = $('wi_hip') && $('wi_hip').value.trim() ? num($('wi_hip').value) : null;
+  const bf = $('wi_bf') && $('wi_bf').value.trim() ? num($('wi_bf').value) : null;
+  const notes = $('wi_note') ? $('wi_note').value.trim() : '';
+  const btn = $('wi_add_btn'); if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    await logWeighInInternal(cid, dt, w, waist, neck, hip, bf, notes);
+    toast('Weigh-in saved');
+    await renderMacroView(cid, isAdmin);
+  } catch (e) {
+    alert(e.message || 'Could not save weigh-in');
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = 'Log weigh-in'; }
+  }
+}
+
+async function delWeighInEntry(id, cid, isAdmin) {
+  if (!confirm('Delete this weigh-in?')) return;
+  checkErr(await sb.from('client_weigh_ins').delete().eq('id', id));
+  toast('Removed');
+  await renderMacroView(cid, isAdmin);
+}
+
+const ACT = [[1.2, 'Sedentary (desk job, little training)'], [1.375, 'Light (1–3 sessions/week)'], [1.5, 'Moderate (3–4 sessions/week)'], [1.55, 'Active (5+ sessions/week)'], [1.725, 'Very active (physical job + training)']];
+function mcSex() { const f = $('mc_sex').value == 'female'; ['mc_hipw', 'wi_hipw'].forEach(i => { const e = $(i); if (e) e.style.display = f ? '' : 'none'; }); refreshMacroPreview(); }
+function mcUnits() {
+  const n = $('mc_units').value, o = S.mcU || (S.macroProf || {}).units || 'metric';
+  if (n != o) {
+    const k = n == 'imperial' ? 1 : -1, cw = v => v * Math.pow(2.20462, k), cl = v => v * Math.pow(2.54, -k);
+    [['mc_weight', cw], ['mc_height', cl], ['mc_waist', cl], ['mc_neck', cl], ['mc_hip', cl]].forEach(([id, f]) => { const e = $(id); if (e && e.value !== '') e.value = r1(f(num(e.value))); });
+    S.mcU = n;
+    document.querySelectorAll('.u-w').forEach(e => e.textContent = n == 'imperial' ? 'lb' : 'kg');
+    document.querySelectorAll('.u-l').forEach(e => e.textContent = n == 'imperial' ? 'in' : 'cm');
+  }
+  refreshMacroPreview();
+}
+function weightTrendSvg(w, uW) {
+  const pts = [...w].reverse().filter(x => num(x.weight) > 0).slice(-30);
+  if (pts.length < 2) return '<p class="mu">Log at least two weigh-ins to see the trend.</p>';
+  const v = pts.map(x => num(x.weight)), mn = Math.min(...v), mx = Math.max(...v), rg = (mx - mn) || 1, W = 320, H = 110;
+  const X = i => 8 + i * (W - 16) / (pts.length - 1), Y = y => H - 14 - (y - mn) / rg * (H - 28);
+  const d = v.map((y, i) => (i ? 'L' : 'M') + X(i).toFixed(1) + ' ' + Y(y).toFixed(1)).join('');
+  const ch = v[v.length - 1] - v[0];
+  return `<svg viewBox="0 0 ${W} ${H}" class="trend" role="img" aria-label="Weight trend"><path d="${d}" fill="none" stroke="var(--acc)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>${v.map((y, i) => `<circle cx="${X(i).toFixed(1)}" cy="${Y(y).toFixed(1)}" r="3" fill="var(--acc)"/>`).join('')}</svg>
+    <div class="row mu"><span>${r1(mn)} – ${r1(mx)} ${uW}</span><span style="text-align:right">${ch > 0 ? '+' : ''}${r1(ch)} ${uW} over ${pts.length} weigh-ins</span></div>`;
+}
+function macroCalculatorHtml(cid, prof, weighIns, foodByDate, isAdmin) {
+  const res = Calc.computeTargets(prof, weighIns, foodByDate);
+  const imp = prof.units === 'imperial', uW = imp ? 'lb' : 'kg', uL = imp ? 'in' : 'cm';
+  const W = `<span class="u-w">${uW}</span>`, L = `<span class="u-l">${uL}</span>`;
+  const fem = prof.sex === 'female', hasProf = num(prof.height) > 0 || num(prof.start_weight) > 0;
+  const todayFood = (foodByDate && foodByDate[today()]) ? foodByDate[today()].reduce((s, x) => s + num(x.calories), 0) : 0;
+  const remKcal = Math.round(res.calories - todayFood), pct = Math.min(100, Math.round(todayFood / Math.max(1, res.calories) * 100));
+  const sel = (id, cur, list, fn) => `<select id="${id}" onchange="${fn}">${list.map(([v, l]) => `<option value="${v}" ${String(cur) === String(v) ? 'selected' : ''}>${l}</option>`).join('')}</select>`;
+  const act = ACT.slice(); const am = num(prof.activity_mult) || 1.5; if (!act.some(a => a[0] == am)) act.push([am, 'Custom (' + am + ')']);
+  const hist = (weighIns || []).slice(0, 12).map(w => `<div class="item"><div class="row"><div><b>${nice(w.date)}</b> · <b>${r1(w.weight)} ${uW}</b>
+    <div class="mu">${num(w.bf_pct) > 0 ? 'BF ' + r1(w.bf_pct) + '%' : 'BF —'}${num(w.waist) > 0 ? ' · Waist ' + r1(w.waist) + uL : ''}${w.notes ? ' · ' + esc(w.notes) : ''}</div></div>
+    <button class="d sm" style="flex:0 0 auto" onclick="delWeighInEntry('${w.id}', '${cid}', ${isAdmin ? 'true' : 'false'})">Delete</button></div></div>`).join('');
+  const n = (id, lab, val, extra) => `<div class="f1" ${extra || ''}><div class="mu">${lab}</div><input id="${id}" type="number" inputmode="decimal" step="any" value="${esc(val ?? '')}" oninput="refreshMacroPreview()"></div>`;
+  return `
+    <div class="card prog">
+      <div class="pt"><b>${remKcal >= 0 ? remKcal + ' kcal left' : Math.abs(remKcal) + ' kcal over'}</b><span class="mu">${Math.round(todayFood)} / ${res.calories} kcal today</span></div>
+      <div class="bar"><i style="width:${pct}%"></i></div>
+      <div id="mc_summary_box" style="margin-top:6px">${renderMacroSummaryCards(res)}</div>
+    </div>
+
+    <div class="card">
+      <h2>Log weigh-in</h2>
+      <div class="fields">
+        <div class="f2"><div class="mu">Date</div><input id="wi_date" type="date" value="${today()}"></div>
+        <div class="f1"><div class="mu">Weight (${W})</div><input id="wi_weight" type="number" inputmode="decimal" step="any" placeholder="0"></div>
+      </div>
+      <details class="more"><summary>More measurements (optional)</summary>
+        <div class="fields">
+          <div class="f1"><div class="mu">BF %</div><input id="wi_bf" type="number" inputmode="decimal" step="any" placeholder="Auto"></div>
+          <div class="f1"><div class="mu">Waist (${L})</div><input id="wi_waist" type="number" inputmode="decimal" step="any"></div>
+          <div class="f1"><div class="mu">Neck (${L})</div><input id="wi_neck" type="number" inputmode="decimal" step="any"></div>
+          <div class="f1" id="wi_hipw" style="${fem ? '' : 'display:none'}"><div class="mu">Hip (${L})</div><input id="wi_hip" type="number" inputmode="decimal" step="any"></div>
+          <div class="f2"><div class="mu">Note</div><input id="wi_note" placeholder="Morning fasted, post-refeed…"></div>
+        </div>
+      </details>
+      <div class="gap"></div>
+      <button id="wi_add_btn" onclick="addWeighInEntry('${cid}', ${isAdmin ? 'true' : 'false'})">Log weigh-in</button>
+    </div>
+
+    <div class="card"><h2>Weight trend</h2>${weightTrendSvg(weighIns || [], uW)}</div>
+
+    <div class="card"><h2>Recent weigh-ins</h2>${hist || '<p class="mu">No weigh-ins logged yet.</p>'}</div>
+
+    <details class="card" ${hasProf ? '' : 'open'}>
+      <summary><h2>Profile &amp; goal settings</h2></summary>
+      <div class="row" style="margin-bottom:8px"><button type="button" class="g sm" style="flex:0" onclick="applySuggestedGoal()">Use suggested goal</button></div>
+      <div class="fields">
+        <div class="f1"><div class="mu">Units</div>${sel('mc_units', prof.units || 'metric', [['metric', 'Metric (kg, cm)'], ['imperial', 'Imperial (lb, in)']], 'mcUnits()')}</div>
+        <div class="f1"><div class="mu">Sex</div>${sel('mc_sex', prof.sex || 'male', [['male', 'Male'], ['female', 'Female']], 'mcSex()')}</div>
+        <div class="f1"><div class="mu">Experience</div>${sel('mc_exp', prof.experience || 'beginner', [['beginner', 'Beginner'], ['intermediate', 'Intermediate']], 'refreshMacroPreview()')}</div>
+        <div class="f1"><div class="mu">Goal</div>${sel('mc_goal', prof.goal || 'cut', [['cut', 'Fat Loss (Cut)'], ['recomp', 'Recomp'], ['maintain', 'Maintain'], ['bulk', 'Muscle Gain (Bulk)']], 'refreshMacroPreview()')}</div>
+        <div class="f1"><div class="mu">Pace</div>${sel('mc_phase', prof.phase || 'phase1', [['phase1', 'Standard'], ['aggressive', 'Faster Cut (-600)'], ['lean', 'Lean Bulk (+250)']], 'refreshMacroPreview()')}</div>
+      </div>
+      <div class="mu">Body measurements (${W}, ${L})</div>
+      <div class="fields">
+        ${n('mc_weight', 'Weight (' + W + ')', prof.start_weight)}${n('mc_height', 'Height (' + L + ')', prof.height)}${n('mc_waist', 'Waist (' + L + ')', prof.waist)}${n('mc_neck', 'Neck (' + L + ')', prof.neck)}${n('mc_hip', 'Hip (' + L + ')', prof.hip, `id="mc_hipw" style="${fem ? '' : 'display:none'}"`)}${n('mc_bf', 'Body Fat %', prof.start_bf)}
+      </div>
+      <div class="mu">Activity level</div>
+      <div class="gap" style="margin:6px 0">${sel('mc_act', am, act, 'refreshMacroPreview()')}</div>
+      ${isAdmin ? `<details class="more"><summary>Advanced: custom targets (blank = auto)</summary><div class="fields">
+        ${n('mc_c_cal', 'Override kcal', prof.custom_calories)}${n('mc_c_pro', 'Protein (g)', prof.custom_protein)}${n('mc_c_carb', 'Carbs (g)', prof.custom_carbs)}${n('mc_c_fat', 'Fat (g)', prof.custom_fat)}</div></details>` : ''}
+      <div class="gap"></div>
+      <button id="mc_save_btn" onclick="saveMacroProfile('${cid}')">Save profile &amp; targets</button>
+    </details>
+  `;
+}
+
+async function renderMacroView(clientId, isAdmin) {
+  const targetId = isAdmin ? (clientId || (S.cl[0] && S.cl[0].id)) : S.u.id;
+  if (!targetId) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  if (isAdmin) S.cid = targetId;
+  const first = !document.querySelector('#tb .mcwrap'), y = window.scrollY;
+  if (first) set('tb', '<div class="skel"></div><div class="skel" style="height:200px"></div>');
+  const data = await loadMacroData(targetId);
+  S.macroProf = data.prof;
+  S.weighIns = data.weighIns;
+  S.foodByDate = data.foodByDate;
+  if (isAdmin && S.tab !== 'macros') return;
+  if (!isAdmin && S.cTab !== 'macros') return;
+  set('tb', '<div class="mcwrap">' + macroCalculatorHtml(targetId, data.prof, data.weighIns, data.foodByDate, isAdmin) + '</div>');
+  S.mcU = data.prof.units || 'metric';
+  if (!first) window.scrollTo(0, y);
+}
+
+function tMacros() {
+  if (!S.cl.length) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  renderMacroView(S.cid || S.cl[0].id, true);
+}
+
+/* ---------- Core UI & Auth ---------- */
+function showErr(msg) {
+  if (!S.u) { loginView(); const m = $('m'); if (m) m.textContent = msg; return; }
+  $('app').innerHTML = `<h1>Coach Tracker</h1><div class="card"><p class="err">${esc(msg)}</p><div class="row"><button onclick="boot()">Try again</button><button class="g" onclick="logout()">Log out</button></div></div>`;
+}
+window.onunhandledrejection = e => { const m = (e.reason && e.reason.message) || 'Something went wrong'; if ($('app') && !$('app').querySelector('.card')) showErr(m); else alert(m); };
+window.onerror = m => { if ($('app') && !$('app').querySelector('.card')) showErr(String(m)); };
+
+async function logout() {
+  await sb.auth.signOut();
+  S.u = null; S.loaded = 0; S.cl = []; S.cart = []; S.foodLogs = []; SESS = {}; S.rt = null; S.rd = null; S.ra = null;
+  loginView();
+}
+
+async function boot() {
+  try {
+    const { data } = await sb.auth.getSession();
+    if (!data.session) return loginView();
+    if (!S.u) {
+      const prof = checkErr(await sb.from('profiles').select('*').eq('id', data.session.user.id).single());
+      S.u = prof;
+    }
+    if (S.u.role == 'admin' || S.u.role == 'coach') await adminView(); else await clientView();
+  } catch (e) { showErr(e.message); }
+}
+const head = () => `<header class="top"><div><h1>${esc(S.u.name)}</h1><div class="mu">${S.u.role == 'admin' ? 'Admin · Full Access' : S.u.role == 'coach' ? 'Coach dashboard' : 'Your workouts'}</div></div><button class="g sm" onclick="logout()">Log out</button></header>`;
+
+/* ---------- Login ---------- */
+function loginView() {
+  $('app').innerHTML = `<div class="auth"><h1>Coach Tracker</h1><p class="mu">Log in to continue.</p><div class="card"><input id="un" placeholder="Username" autocapitalize="none" autocomplete="username"><div class="gap"></div><input id="pw" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key=='Enter')login()"><div class="gap"></div><button onclick="login()">Log in</button><p id="m" class="err"></p></div></div>`;
+}
+async function login() {
+  const m = $('m'); if (m) m.textContent = 'Logging in…';
+  try {
+    const r = await api('login', { username: $('un').value.trim(), password: $('pw').value });
+    S.u = r.user;
+    boot();
+  } catch (e) { const m2 = $('m'); if (m2) { m2.textContent = e.message; const c = m2.closest('.card'); if (c) { c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake'); } } }
+}
+
+/* ---------- Client ---------- */
+const ymdStr = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+function shiftDate(v, n) { const d = new Date((v || today()) + 'T12:00:00'); d.setDate(d.getDate() + n); return ymdStr(d); }
+function dayShift(n) { const d = shiftDate(S.date, n); if (d < today()) return; S.date = d; clientView(); }
+function foodDay(n, adm) { S.foodDate = shiftDate(S.foodDate, n); adm ? loadAdminFood() : loadClientFood(); }
+function pickMeal(m) { S.foodMeal = m; if ($('fd_meal')) $('fd_meal').value = m; document.querySelectorAll('#fd_mealbar button').forEach(b => b.classList.toggle('on', b.textContent == m)); }
+async function clientView() {
+  const cTab = S.cTab || 'workouts';
+  if (S.date < today()) S.date = today();
+  $('app').innerHTML = head()
+    + `<nav class="tabs"><button class="${cTab == 'workouts' ? 'on' : ''}" onclick="S.cTab='workouts';clientView()">Workouts</button><button class="${cTab == 'food' ? 'on' : ''}" onclick="S.cTab='food';clientView()">Food</button><button class="${cTab == 'macros' ? 'on' : ''}" onclick="S.cTab='macros';clientView()">Macros</button></nav>`
+    + `<div id="tb"><div class="skel"></div><div class="skel" style="height:140px"></div></div>`;
+  if (cTab === 'food') {
+    await loadClientFood();
+    return;
+  }
+  if (cTab === 'macros') {
+    await renderMacroView(S.u.id, false);
+    return;
+  }
+  set('tb', `<div class="card"><div class="row u"><button class="g sm" aria-label="Previous day" onclick="dayShift(-1)" ${S.date <= today() ? 'disabled' : ''}>‹</button><input type="date" id="dt" value="${S.date}" min="${today()}" onchange="S.date=this.value&&this.value>=today()?this.value:today();clientView()"><button class="g sm" aria-label="Next day" onclick="dayShift(1)">›</button></div>${S.date != today() ? '<button class="g sm" style="margin-top:8px" onclick="S.date=today();clientView()">Back to today</button>' : ''}</div><div class="card prog" id="pg" hidden><div class="pt"><b id="pgt"></b><span class="mu" id="pgs"></span></div><div class="bar"><i id="pgb"></i></div></div><div id="pl" class="grid"><div class="skel"></div><div class="skel"></div></div>`);
+  const d = S.date, r = await api('plan', { date: d });
+  if (d != S.date || S.cTab != 'workouts') return;
+  S.plan = {}; r.items.forEach(i => S.plan[i.id] = i);
+  const isD = i => i.log && i.log.done == 'true', todo = r.items.filter(i => !isD(i)), dn = r.items.filter(isD);
+  set('pl', (r.program ? `<h2 class="sec" style="margin-top:0">${esc(r.program)}</h2>` : '') + (r.items.length ? todo.map(planCard).join('') + (dn.length ? `<h2 class="sec">Completed · ${dn.length}</h2>` + dn.map(planCard).join('') : '') : '<p class="mu">No workout assigned for this day.</p>'));
+  updateProg();
+}
+S.rs = {};
+function restSecs(v) { v = String(v || '').toLowerCase().trim(); if (!v) return 0; let m = v.match(/^(\d+):(\d{1,2})$/); if (m) return +m[1] * 60 + +m[2]; m = v.match(/(\d+(?:\.\d+)?)\s*(?:m|min|mins|minute|minutes)\b/); if (m) return Math.round(parseFloat(m[1]) * 60); m = v.match(/(\d+(?:\.\d+)?)/); return m ? Math.round(parseFloat(m[1])) : 0; }
+const fmtRest = n => n >= 60 && n % 60 == 0 ? (n / 60) + ' min' : n + 's';
+const RT = { end: 0, tm: null, hide: null, ac: null, name: '' };
+function restBeep() { try { const a = RT.ac; if (!a) return; [0, 0.32].forEach(t => { const o = a.createOscillator(), g = a.createGain(); o.frequency.value = 880; g.gain.value = 0.25; o.connect(g); g.connect(a.destination); o.start(a.currentTime + t); o.stop(a.currentTime + t + 0.22); }); } catch (_) {} }
+function restUI() { let b = $('rt'); if (!b) { b = document.createElement('div'); b.id = 'rt'; b.setAttribute('role', 'timer'); document.body.appendChild(b); } b.className = 'on'; b.innerHTML = '<div class="rt-t"><div class="mu" id="rt_l"></div><b id="rt_n">0:00</b></div><button type="button" class="g" onclick="restAdd(15)">+15s</button><button type="button" onclick="restStop()">Skip</button>'; }
+function restRun() { clearInterval(RT.tm); clearTimeout(RT.hide); restUI(); restTick(); RT.tm = setInterval(restTick, 250); }
+function restStart(id) {
+  const secs = (S.rs || {})[id]; if (!secs) return;
+  const c = $('a' + id), h = c && c.querySelector('.ex');
+  RT.name = h ? h.textContent : 'Rest'; RT.end = Date.now() + secs * 1000;
+  try { RT.ac = RT.ac || new (window.AudioContext || window.webkitAudioContext)(); if (RT.ac.resume) RT.ac.resume(); } catch (_) {}
+  restRun();
+}
+function restAdd(n) { RT.end = Math.max(RT.end, Date.now()) + n * 1000; restRun(); }
+function restTick() {
+  const n = $('rt_n'); if (!n) return;
+  const left = Math.max(0, Math.ceil((RT.end - Date.now()) / 1000));
+  $('rt_l').textContent = 'Rest · ' + RT.name;
+  if (left > 0) { n.textContent = Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0'); return; }
+  clearInterval(RT.tm); n.textContent = 'Go!'; $('rt').classList.add('done'); restBeep();
+  try { if (navigator.vibrate) navigator.vibrate([250, 120, 250]); } catch (_) {}
+  RT.hide = setTimeout(restStop, 6000);
+}
+function restStop() { clearInterval(RT.tm); clearTimeout(RT.hide); const b = $('rt'); if (b) b.className = ''; }
+function planCard(i) {
+  const l = i.log || {}, f = fieldsOf(i), t = fmt(i, i), rich = parseRichItem(i), rs = restSecs(rich.rest); S.rs[i.id] = rs;
+  const inp = k => {
+    if (!UN[k]) return `<div class="f1"><div class="mu">${FD[k]}</div><input data-k="${k}" value="${esc(val(l, k, i))}"></div>`;
+    const p = parseUV(k, val(l, k, i)), tp = parseUV(k, val(i, k, i)), u = p.n !== '' ? p.u : tp.u;
+    return `<div class="f2"><div class="mu">${FD[k]}</div><div class="row u"><input type="number" inputmode="decimal" step="any" data-k="${k}" value="${esc(p.n)}">${unitSel(k, `data-u="${k}"`, u)}</div></div>`;
+  };
+  return `<div class="card ${l.done == 'true' ? 'done' : ''}" id="a${i.id}">${mediaBlock(i.media, 'p' + i.id, i.exercise)}<h3 class="ex">${esc(i.exercise)}</h3>${parseMedia(i.media) ? '' : `<div class="mu"><a href="${ytSearch(i.exercise)}" target="_blank" rel="noopener">Need help? Search how-to on YouTube</a></div>`}
+  <div class="tg">${t ? 'Target ' + t : 'No target set'}</div>
+  ${rich.cleanNotes ? `<div class="mu">Coach note: ${esc(rich.cleanNotes)}</div>` : ''}${rs ? `<div class="mu">⏱ Rest ${esc(fmtRest(rs))} between sets</div>` : ''}
+  <div class="fields">${f.map(inp).join('')}</div>
+  <input data-k="note" placeholder="Your note" value="${esc(l.note || '')}">
+  <div class="foot"><label class="chk"><input type="checkbox" data-k="done" ${l.done == 'true' ? 'checked' : ''} onchange="saveLog('${i.id}');if(this.checked)restStart('${i.id}')"> Completed</label>${rs ? `<button type="button" class="g sm" onclick="restStart('${i.id}')">⏱ ${fmtRest(rs)}</button>` : ''}<button class="save" onclick="saveLog('${i.id}')">Save</button></div></div>`;
+}
+async function saveLog(id) {
+  const c = $('a' + id); if (!c) return;
+  const g = k => { const e = c.querySelector(`[data-k="${k}"]`); if (!e) return ''; if (e.type == 'checkbox') return e.checked; if (UN[k]) { const n = e.value.trim(); if (n === '') return ''; const s = c.querySelector(`[data-u="${k}"]`); return n + ' ' + (s ? s.value : UDEF[k]); } return e.value; };
+  const done = g('done');
+  const b = c.querySelector('button.save');
+  if (b) { b.disabled = true; b.textContent = 'Saving…'; }
+  try {
+    await api('log', { assignId: id, sets: g('sets'), reps: g('reps'), weight: g('weight'), duration: g('duration'), distance: g('distance'), note: g('note'), done });
+    const a = $('a' + id); if (!a) return;
+    a.classList.toggle('done', done);
+    a.classList.remove('flash'); void a.offsetWidth; a.classList.add('flash');
+    updateProg();
+    if (b) { b.textContent = 'Saved ✓'; b.classList.add('ok'); setTimeout(() => { b.textContent = 'Save'; b.classList.remove('ok'); }, 1400); }
+  } catch (e) {
+    alert(e.message || 'Could not save workout log');
+    if (b) b.textContent = 'Save';
+  } finally {
+    if (b) b.disabled = false;
+  }
+}
+
+/* ---------- Admin ---------- */
+const opts = () => S.cl.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join('');
+const menu = h => `<details class="menu"><summary aria-label="More actions">⋯</summary><div class="menu-pop">${h}</div></details>`;
+function filt(v) { v = v.toLowerCase().trim(); document.querySelectorAll('.grid>.card[data-q]').forEach(c => c.style.display = c.dataset.q.includes(v) ? '' : 'none'); }
+document.addEventListener('click', e => document.querySelectorAll('details.menu[open]').forEach(m => { if (!m.contains(e.target)) m.removeAttribute('open'); }));
+const CT = { sessions: 'Sessions', assign: 'Assign', track: 'Progress', food: 'Food', macros: 'Macros' };
+const topOf = t => CT[t] ? 'clients' : (t == 'users' || t == 'coaches') ? 'team' : t;
+const subSeg = (pairs, tab) => `<div class="subtabs">${pairs.map(([k, l]) => `<button class="${k == tab ? 'on' : ''}" onclick="S.tab='${k}';adminView()">${l}</button>`).join('')}</div>`;
+function ctxHtml(tab) {
+  if (topOf(tab) == 'team') return subSeg([['users', 'Users'], ['coaches', 'Coaches']], tab);
+  if (!CT[tab]) return '';
+  return `<div class="cbar"><button class="g sm" onclick="S.tab='clients';adminView()">← Clients</button><select aria-label="Client" onchange="ctxPick(this.value)">${opts()}</select></div>` + subSeg(Object.entries(CT), tab);
+}
+function ctxPick(id) { S.cid = S.sc = id; S.sd = ''; S.ed = ''; adminView(); }
+function openClient(id) { S.cid = S.sc = id; S.sd = ''; S.ed = ''; S.tab = 'sessions'; adminView(); }
+async function adminView() {
+  const isAdm = S.u.role === 'admin';
+  const tabList = isAdm ? ['users', 'clients', 'coaches', 'assign', 'routines', 'track', 'sessions', 'food', 'macros', 'exercises'] : ['clients', 'assign', 'routines', 'track', 'sessions', 'food', 'macros', 'exercises'];
+  if (!tabList.includes(S.tab)) S.tab = 'clients';
+  const tab = S.tab;
+  const tabLabels = { users: 'Users', clients: 'Clients', coaches: 'Coaches', assign: 'Assign', routines: 'Routines', track: 'Track', sessions: 'Sessions', food: 'Food Diary', macros: 'Macros & TDEE', exercises: 'Exercises' };
+  const mainNav = [['clients', 'Clients'], ['routines', 'Routines'], ['exercises', 'Exercises']].concat(isAdm ? [['team', 'Team']] : []);
+  $('app').innerHTML = head() + `<nav class="tabs">${mainNav.map(([t, l]) => `<button class="${topOf(tab) == t ? 'on' : ''}" onclick="S.tab='${t == 'team' ? 'users' : t}';adminView()">${l}</button>`).join('')}</nav><div id="cx"></div><div id="tb"><div class="skel"></div><div class="skel" style="height:140px"></div></div>`;
+  { const nv = document.querySelector('.tabs'), ob = nv && nv.querySelector('.on'); if (ob) nv.scrollLeft = ob.offsetLeft - (nv.clientWidth - ob.clientWidth) / 2; }
+  if (!S.loaded) {
+    const reqs = [api('clients'), api('exercises')];
+    if (isAdm) { reqs.push(api('coaches')); reqs.push(api('allUsers')); }
+    const res = await Promise.all(reqs);
+    S.cl = res[0].cl; S.ex = res[1].ex;
+    S.coaches = isAdm ? res[2].coaches : [];
+    S.allUsers = isAdm ? res[3].users : [];
+    cleanEx(); S.loaded = 1;
+    if (!$('tb') || S.tab != tab) return;
+  }
+  if (CT[tab] && !S.cl.some(c => c.id == S.cid)) S.cid = S.cl[0] ? S.cl[0].id : '';
+  if (tab == 'sessions') S.sc = S.cid;
+  $('tb').className = CT[tab] ? 'ctx' : '';
+  $('cx').innerHTML = ctxHtml(tab);
+  { const sl = $('cx').querySelector('select'); if (sl) sl.value = S.cid; }
+  ({ users: tUsers, clients: tClients, coaches: tCoaches, assign: tAssign, routines: tRoutines, track: tTrack, sessions: tSessions, food: tFood, macros: tMacros, exercises: tExercises })[tab]();
+}
+
+function tClients() {
+  set('tb', `<details class="card" ${S.cl.length ? '' : 'open'}><summary><h2>Add client</h2></summary><input id="cn" placeholder="Full name"><div class="gap"></div><input id="cu" placeholder="Username" autocapitalize="none"><div class="gap"></div><input id="cp" placeholder="Password (4+ characters)"><div class="gap"></div><button onclick="addClient()">Add client</button></details>`
+    + (S.cl.length > 5 ? '<input class="gap" placeholder="Search clients…" aria-label="Search clients" oninput="filt(this.value)">' : '') + '<div class="grid">' + (S.cl.map(c => `<div class="card row" data-q="${esc((c.name + ' ' + c.username).toLowerCase())}"><div><b>${esc(c.name)}</b><div class="mu">@${esc(c.username)}</div></div><button onclick="openClient('${c.id}')">Open</button>${menu(`<button class="g" onclick="resetPw('${c.id}')">Reset password</button><button class="d" onclick="delClient('${c.id}')">Remove</button>`)}</div>`).join('') || '<p class="mu">No clients yet. Add your first one above.</p>') + '</div>');
+}
+async function addClient() {
+  await api('addClient', { name: $('cn').value.trim(), username: $('cu').value.trim(), password: $('cp').value, role: 'client' });
+  const reqs = [api('clients')];
+  if (S.u.role === 'admin') reqs.push(api('allUsers'));
+  const res = await Promise.all(reqs);
+  S.cl = res[0].cl;
+  if (S.u.role === 'admin') S.allUsers = res[1].users;
+  adminView();
+}
+async function resetPw(id) {
+  const p = prompt('New password for this client (4+ characters)');
+  if (p) { await api('resetPw', { clientId: id, password: p }); toast('Password updated'); }
+}
+async function delClient(id) {
+  const c = S.cl.find(x => x.id == id); if (!c) return;
+  if (!confirm('Remove ' + c.name + '? This also deletes all their assigned workouts and logs. This cannot be undone.')) return;
+  await api('delClient', { clientId: id });
+  if (S.cid == id) S.cid = '';
+  delete SESS[id];
+  S.cl = (await api('clients')).cl; adminView();
+}
+
+/* Coaches (Admin only) */
+function tCoaches() {
+  if (S.u.role !== 'admin') return;
+  set('tb', `<details class="card" ${(S.coaches || []).length ? '' : 'open'}><summary><h2>Add coach</h2></summary><p class="mu" style="margin:-6px 0 10px">Coaches can add clients, assign workouts, track progress, and record sessions.</p><input id="chn" placeholder="Coach full name"><div class="gap"></div><input id="chu" placeholder="Username" autocapitalize="none"><div class="gap"></div><input id="chp" placeholder="Password (4+ characters)"><div class="gap"></div><button onclick="addCoach()">Add coach</button></details>`
+    + '<div class="grid">' + ((S.coaches || []).map(c => `<div class="card row"><div><b>${esc(c.name)}</b><div class="mu">@${esc(c.username)} · Coach</div></div>${menu(`<button class="g" onclick="resetPw('${c.id}')">Reset password</button><button class="d" onclick="delCoach('${c.id}')">Remove</button>`)}</div>`).join('') || '<p class="mu">No coaches added yet.</p>') + '</div>');
+}
+async function addCoach() {
+  await api('addClient', { name: $('chn').value.trim(), username: $('chu').value.trim(), password: $('chp').value, role: 'coach' });
+  S.coaches = (await api('coaches')).coaches; adminView();
+}
+async function delCoach(id) {
+  const c = (S.coaches || []).find(x => x.id == id); if (!c) return;
+  if (!confirm('Remove coach ' + c.name + '? Their login access will be revoked.')) return;
+  await api('delClient', { clientId: id });
+  S.coaches = (await api('coaches')).coaches; adminView();
+}
+
+/* Users & Roles (Admin only) */
+function tUsers() {
+  if (S.u.role !== 'admin') return;
+  const list = S.allUsers || [];
+  set('tb', `<div class="card"><h2>Create user with role</h2><p class="mu" style="margin:-6px 0 10px">Choose whether the new account is a Client, Coach, or Admin.</p>
+    <input id="un_name" placeholder="Full name"><div class="gap"></div>
+    <input id="un_user" placeholder="Username" autocapitalize="none"><div class="gap"></div>
+    <input id="un_pass" placeholder="Password (4+ characters)"><div class="gap"></div>
+    <select id="un_role">
+      <option value="client">Client (workouts &amp; logging)</option>
+      <option value="coach">Coach (clients, workouts, tracking, sessions)</option>
+      <option value="admin">Admin (full access &amp; role management)</option>
+    </select><div class="gap"></div>
+    <button onclick="createUserWithRole()">Create user</button></div>
+    <div class="grid">` + list.map(u => `<div class="card row" data-q="${esc((u.name + ' ' + u.username + ' ' + u.role).toLowerCase())}">
+      <div><b>${esc(u.name)}</b><div class="mu">@${esc(u.username)} · <b>${esc(u.role)}</b></div></div>
+      <select aria-label="Role for ${esc(u.name)}" onchange="changeUserRole('${u.id}', this.value)">
+        <option value="client" ${u.role == 'client' ? 'selected' : ''}>Client</option>
+        <option value="coach" ${u.role == 'coach' ? 'selected' : ''}>Coach</option>
+        <option value="admin" ${u.role == 'admin' ? 'selected' : ''}>Admin</option>
+      </select>
+      ${menu(`<button class="g" onclick="resetPw('${u.id}')">Reset password</button>${u.id !== S.u.id ? `<button class="d" onclick="deleteAnyUser('${u.id}')">Remove</button>` : ''}`)}
+    </div>`).join('') + '</div>');
+}
+async function createUserWithRole() {
+  await api('addClient', {
+    name: $('un_name').value.trim(),
+    username: $('un_user').value.trim(),
+    password: $('un_pass').value,
+    role: $('un_role').value
+  });
+  const [a, b, c] = await Promise.all([api('clients'), api('coaches'), api('allUsers')]);
+  S.cl = a.cl; S.coaches = b.coaches; S.allUsers = c.users;
+  adminView();
+}
+async function changeUserRole(userId, role) {
+  await api('setRole', { userId, role });
+  const [a, b, c] = await Promise.all([api('clients'), api('coaches'), api('allUsers')]);
+  S.cl = a.cl; S.coaches = b.coaches; S.allUsers = c.users;
+  adminView();
+}
+async function deleteAnyUser(userId) {
+  const u = (S.allUsers || []).find(x => x.id == userId); if (!u) return;
+  if (!confirm('Delete user ' + u.name + ' (@' + u.username + ')? This cannot be undone.')) return;
+  await api('delClient', { clientId: userId });
+  const [a, b, c] = await Promise.all([api('clients'), api('coaches'), api('allUsers')]);
+  S.cl = a.cl; S.coaches = b.coaches; S.allUsers = c.users;
+  adminView();
+}
+
+/* Assign */
+function presetFor(n) {
+  const k = norm(n);
+  if (isCardio(n)) return (k == 'stairmaster' || k == 'stairmill' || k == 'stepmill' || k == 'elliptical') ? ['duration'] : ['duration', 'distance'];
+  if (/plank|hold|wall ?sit|hollow|dead ?bug|bird ?dog|isometric|cocoon|battle ?rope|flutter|mountain ?climber|wiper/i.test(n)) return ['sets', 'duration'];
+  return ['sets', 'reps', 'weight'];
+}
+function presetFields() {
+  const f = presetFor($('ae') ? $('ae').value : '');
+  ORDER.forEach(k => { const c = $('f_' + k); if (c) c.checked = f.includes(k); });
+  togFields();
+  const am = $('am'); if (am) { const n = ($('ae') ? $('ae').value : '').trim().toLowerCase(); const e = S.ex.find(x => x.name.toLowerCase() == n); const sm = splitMedia(e && e.media); am.value = sm.url; if ($('at')) $('at').value = sm.type; }
+}
+function togFields() { ORDER.forEach(k => { const w = $('w_' + k), c = $('f_' + k); if (w && c) w.style.display = c.checked ? '' : 'none'; }); }
+
+function tAssign() {
+  if (!S.cl.length) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  const g = [...new Set(S.ex.map(e => e.group))];
+  set('tb', `<div class="card"><select id="ac" onchange="S.cid=this.value;loadDayProg()">${opts()}</select>
+  <div class="gap"></div><div class="mu">Workout of the day</div><input type="date" id="ad" value="${S.date}" onchange="loadDayProg()"><div class="gap"></div><div class="mu">Program name for this day (optional)</div><input id="apn" placeholder="e.g. Push Day, Leg Day" oninput="this.dataset.dirty=1"></div>
+  <div class="card"><div class="row"><select id="ag" onchange="exRefresh('ae')"><option value="">All groups</option>${g.map(x => `<option>${esc(x)}</option>`).join('')}</select><div class="cb" style="flex:2 1 160px"><input id="ae" autocomplete="off" role="combobox" aria-expanded="false" data-g="ag" data-l="ael" placeholder="Exercise (type to search)" oninput="exFilter(this);presetFields()" onfocus="exFocus(this)" onkeydown="exKey(event,this)" onchange="presetFields()"><div id="ael" class="cb-list" role="listbox" hidden></div></div></div>
+  <div class="gap"></div><div class="mu">What should the client track for this exercise?</div>
+  <div class="chips">${ORDER.map(k => `<label class="chip"><input type="checkbox" id="f_${k}" onchange="togFields()"> ${FD[k]}</label>`).join('')}</div>
+  <div class="mu">Targets (optional)</div>
+  <div class="fields">${ORDER.map(k => `<div id="w_${k}" class="${UN[k] ? 'f2' : 'f1'}"><div class="mu">${FD[k]}</div>${UN[k] ? `<div class="row u"><input id="t_${k}" type="number" inputmode="decimal" step="any">${unitSel(k, `id="u_${k}"`, UDEF[k])}</div>` : `<input id="t_${k}">`}</div>`).join('')}</div>
+  <div class="row gap"><input id="am" type="url" inputmode="url" placeholder="Photo / GIF / video link (optional)"><select id="at" style="flex:0 0 auto" title="Show as"><option value="auto">Auto</option><option value="photo">Photo / GIF</option><option value="video">Video</option></select></div>
+  <div class="mu">Rest between sets, in seconds (optional) — a countdown starts on the client's phone</div><input id="a_rest" type="number" inputmode="numeric" min="0" placeholder="e.g. 90"><div class="gap"></div><input id="an" placeholder="Notes for the client"><div class="gap"></div><button class="g" onclick="addItem()">Add to list</button></div><div id="cart"></div>`);
+  if (S.cid) $('ac').value = S.cid; S.cid = $('ac').value;
+  fillDl(); presetFields(); cartView(); loadDayProg();
+}
+async function loadDayProg() {
+  const a = $('apn'), c = $('ac'), d = $('ad'); if (!a || !c || !d || !d.value) return;
+  a.dataset.dirty = ''; const key = c.value + '|' + d.value; S.dpk = key;
+  const r = await sb.from('client_day_meta').select('program_name').eq('client_id', c.value).eq('date', d.value).maybeSingle();
+  if (S.dpk === key && $('apn') && !$('apn').dataset.dirty) $('apn').value = (r.data && r.data.program_name) || '';
+}
+function fillDl() { }
+async function addItem() {
+  const n = $('ae').value.trim(); if (!n) return;
+  const f = ORDER.filter(k => $('f_' + k).checked);
+  if (!f.length) { alert('Choose at least one thing to track: sets, reps, weight, duration or distance.'); return; }
+  const lurl = ($('am') ? $('am').value : '').trim();
+  if (lurl && !okUrl(lurl)) { alert('The link must start with http:// or https://'); return; }
+  const link = composeMedia(lurl, $('at') ? $('at').value : 'auto');
+  const it = { exercise: n, fields: f.join(','), notes: $('an').value, rest: ($('a_rest') ? $('a_rest').value.trim() : '') };
+  ORDER.forEach(k => { const n = f.includes(k) ? $('t_' + k).value.trim() : ''; it[k] = (UN[k] && n) ? n + ' ' + $('u_' + k).value : n; });
+  if (!S.ex.some(e => e.name.toLowerCase() == n.toLowerCase())) { const g = $('ag').value || 'Custom'; await api('addExercise', { name: n, group: g }); S.ex.push({ name: n, group: g }); }
+  const ex = S.ex.find(e => e.name.toLowerCase() == n.toLowerCase());
+  if (link && ex && (ex.media || '') != link) { await api('setMedia', { name: ex.name, group: ex.group, media: link }); ex.media = link; }
+  S.cart.push(it);
+  if (!$('ae')) return;
+  ['ae', 'am', 'an', 'a_rest'].concat(ORDER.map(k => 't_' + k)).forEach(i => { if ($(i)) $(i).value = ''; });
+  presetFields(); cartView();
+}
+function cartView() {
+  set('cart', rtBar() + S.cart.map((c, i) => `<div class="card row"><div><b>${esc(c.exercise)}</b><div class="mu">${fmt(c, c) || 'No target'} · tracks ${fieldsOf(c).map(k => FD[k]).join(', ')} ${c.rest ? '· Rest ' + esc(c.rest) + 's ' : ''}${esc(c.notes)}</div></div><button class="g" style="flex:0" onclick="S.cart.splice(${i},1);cartView()">Remove</button></div>`).join('')
+    + (S.cart.length ? `<button onclick="doAssign()">Assign ${S.cart.length} exercise${S.cart.length > 1 ? 's' : ''} to client</button>` : ''));
+}
+async function doAssign() {
+  const date = $('ad') ? $('ad').value : '';
+  if (!date) { alert('Pick a date'); return; }
+  const pn = $('apn') ? $('apn').value.trim() : '', cid0 = $('ac').value;
+  const r = await api('assign', { clientId: cid0, dates: [date], items: S.cart.map(c => ({ ...c, notes: serializeRichPayload({ notes: c.notes, rest: c.rest ? c.rest + ' sec' : '' }).notes })) });
+  if (pn) { try { checkErr(await sb.from('client_day_meta').upsert({ client_id: cid0, date, program_name: pn }, { onConflict: 'client_id,date' })); } catch (e) { toast('Assigned, but the program name could not be saved'); } }
+  S.cart = []; cartView(); toast(r.n + ' workout entries assigned');
+}
+
+/* Track */
+function tTrack() {
+  if (!S.cl.length) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  set('tb', `<div class="card"><div class="row"><select id="tc" onchange="loadTrack()">${opts()}</select><input type="date" id="td" value="${S.date}" onchange="loadTrack()"></div><div class="gap"></div><button class="g sm" onclick="exportClient()">Export client data (CSV)</button></div><div id="tr">Loading…</div>`);
+  if (S.cid) $('tc').value = S.cid; loadTrack();
+}
+async function loadTrack() {
+  const tc = $('tc'), td = $('td'); if (!tc || !td) return;
+  const cid = S.cid = tc.value, date = S.date = td.value, rq = S.rq = (S.rq || 0) + 1;
+  const [p, g] = await Promise.all([api('plan', { clientId: cid, date }), api('progress', { clientId: cid })]);
+  if (rq != S.rq || !$('tr')) return;
+  const last = g.days.slice(0, 2);
+  const line = i => {
+    const l = i.log, ok = l && l.done == 'true';
+    return `<b>${esc(i.exercise)}</b> <span class="mu">${fmt(i, i)}</span>
+    <div>${l ? (ok ? 'Completed' : 'Started') + ': ' + fmt(l, i) + ' ' + esc(l.note) : '<span class="mu">Not logged yet</span>'}</div>`;
+  };
+  S.pi = p.items;
+  set('tr', `<h2>${nice(date)}</h2>` + (p.items.map(i => `<div class="card ${i.log && i.log.done == 'true' ? 'done' : ''}">${line(i)}
+    <div class="gap"></div><div class="row"><button class="g sm" onclick="editA('${i.id}')">Edit</button><button class="d sm" onclick="delA('${i.id}')">Delete</button></div></div>`).join('') || '<p class="mu">Nothing assigned for this day.</p>')
+    + '<h2>Previous 2 days</h2>' + (last.map(d => `<div class="card ${d.done == d.total ? 'done' : ''}"><div class="row"><b>${esc(d.date)}</b><span style="text-align:right">${d.done} of ${d.total} done</span></div>`
+      + (d.items || []).map(i => `<div class="gap">${line(i)}</div>`).join('') + '</div>').join('') || '<p class="mu">No history yet.</p>'));
+}
+async function editA(id) {
+  const i = (S.pi || []).find(x => x.id == id); if (!i) return;
+  const v = {};
+  for (const [k, l] of [['sets', 'Sets'], ['reps', 'Reps'], ['weight', 'Weight']]) {
+    const r = prompt(l, i[k] || ''); if (r === null) return; v[k] = r.trim();
+  }
+  await api('editAssign', { id, ...v }); toast('Updated'); loadTrack();
+}
+async function exportClient() {
+  const cid = S.cid; if (!cid) return;
+  const c = S.cl.find(x => x.id == cid), q = t => sb.from(t).select('*').eq('client_id', cid).limit(5000);
+  const [a, f, w] = await Promise.all([sb.from('assign').select('*, logs(*)').eq('client_id', cid).limit(5000), q('food_logs'), q('client_weigh_ins')]);
+  const flat = r => (r.data || []).map(o => { const x = { ...o }; if (x.logs) x.logs = JSON.stringify(x.logs); return x; });
+  const csv = (title, rows) => { if (!rows.length) return title + '\n(none)\n'; const h = [...new Set(rows.flatMap(Object.keys))];
+    return title + '\n' + h.join(',') + '\n' + rows.map(o => h.map(k => '"' + String(o[k] ?? '').replace(/"/g, '""') + '"').join(',')).join('\n') + '\n'; };
+  const out = csv('WORKOUTS', flat(a)) + '\n' + csv('FOOD', flat(f)) + '\n' + csv('WEIGH-INS', flat(w));
+  const el = document.createElement('a'); el.href = URL.createObjectURL(new Blob([out], { type: 'text/csv' }));
+  el.download = (c ? c.name : 'client').replace(/\W+/g, '_') + '_backup_' + today() + '.csv'; el.click();
+}
+async function delA(id) { if (confirm('Delete this exercise from the plan?')) { await api('delAssign', { id }); loadTrack(); } }
+
+/* ---------- Sessions: Supabase-synced Coach/Admin Workout History ---------- */
+let SESS = {};
+const sDays = cid => SESS[cid] || {};
+const sDay = (cid, d) => sDays(cid)[d] || [];
+const logged = list => Array.isArray(list) && list.length > 0;
+const ymd = (y, m, d) => new Date(y, m, d).toLocaleDateString('en-CA');
+const nice = d => new Date(d + 'T00:00:00').toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+const SET_METRIC_DEFS = [
+  { id: 'reps', label: 'Reps / Count', ph: 'Reps (e.g. 12)' },
+  { id: 'weight', label: 'Weight', ph: 'Weight (e.g. 40 kg)' },
+  { id: 'duration', label: 'Duration', ph: 'Time (e.g. 45 sec)' },
+  { id: 'distance', label: 'Distance', ph: 'Dist (e.g. 200 m)' },
+  { id: 'rpe', label: 'RPE', ph: 'RPE (e.g. 8)' }
+];
+
+function serializeRichPayload(payload, setCols, setRows) {
+  const extra = {};
+  if (payload.pace) extra.pace = payload.pace;
+  if (payload.rest) extra.rest = payload.rest;
+  if (payload.rpe) extra.rpe = payload.rpe;
+  if (Array.isArray(setRows) && setRows.length) {
+    extra.setCols = setCols || ['reps', 'weight'];
+    extra.setRows = setRows;
+  }
+  const baseNotes = String(payload.notes || '').trim();
+  const marker = Object.keys(extra).length ? '\n[[GYM_META:' + JSON.stringify(extra) + ']]' : '';
+  return {
+    ...payload,
+    notes: baseNotes + marker
+  };
+}
+
+function parseRichItem(it) {
+  const rawNotes = String(it.notes || '');
+  const match = rawNotes.match(/\n?\[\[GYM_META:(.*?)\]\]$/s);
+  let meta = {};
+  let cleanNotes = rawNotes;
+  if (match) {
+    cleanNotes = rawNotes.replace(match[0], '').trim();
+    try { meta = JSON.parse(match[1]) || {}; } catch (_) { meta = {}; }
+  }
+  let setRows = Array.isArray(meta.setRows) ? meta.setRows : [];
+  if (!setRows.length && String(it.fields || '').split(',').includes('perset') && String(it.reps || '').trim()) {
+    setRows = String(it.reps).trim().split('|').map((seg, idx) => {
+      const parts = seg.split('@').map(s => s.trim());
+      return { n: idx + 1, reps: parts[0] || '', weight: parts[1] || '' };
+    }).filter(x => x.reps || x.weight || x.duration || x.distance || x.rpe);
+  }
+  return {
+    cleanNotes,
+    pace: meta.pace || '',
+    rest: meta.rest || '',
+    rpe: meta.rpe || '',
+    setCols: Array.isArray(meta.setCols) && meta.setCols.length ? meta.setCols : ['reps', 'weight'],
+    setRows
+  };
+}
+
+async function fetchClientSessions(cid) {
+  const r = await api('getSessions', { clientId: cid });
+  const map = {};
+  (r.items || []).forEach(it => {
+    if (!map[it.date]) map[it.date] = [];
+    map[it.date].push(it);
+  });
+  SESS[cid] = map;
+}
+
+function tSessions() {
+  if (!S.cl.length) { set('tb', '<p class="mu">Add a client first.</p>'); return; }
+  if (S.sc && S.cl.some(c => c.id == S.sc)) {
+    if (!S.cm || !SESS[S.sc] || S.scOpen !== S.sc) { S.scOpen = S.sc; return openProfile(S.sc); }
+    return sProfile();
+  }
+  S.sc = '';
+  set('tb', '<p class="mu">Tap a client to view their gym workout history (last 2 days expanded) and log exercises.</p>'
+    + '<div class="grid">' + S.cl.map(c => `<div class="card row" style="cursor:pointer" onclick="openProfile('${c.id}')"><div><b>${esc(c.name)}</b><div class="mu">@${esc(c.username)}</div></div><button class="g" style="flex:0;white-space:nowrap">Open profile</button></div>`).join('') + '</div>');
+}
+
+async function openProfile(id) {
+  S.sc = id; S.sd = ''; S.ed = ''; S.rc = 5; S.cm = today().slice(0, 7); S.openDays = {};
+  set('tb', '<div class="skel"></div><div class="skel" style="height:180px"></div>');
+  await fetchClientSessions(id);
+  const all = Object.keys(sDays(id)).filter(d => logged(sDays(id)[d])).sort().reverse();
+  all.slice(0, 2).forEach(d => { S.openDays[d] = true; });
+  if (S.sc == id && S.tab == 'sessions') sProfile();
+}
+
+function pickDay(d) {
+  if (!d) return;
+  S.sd = d; S.ed = ''; S.cm = d.slice(0, 7);
+  S.setCols = ['reps', 'weight'];
+  S.setRows = [
+    { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+    { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+    { reps: '', weight: '', duration: '', distance: '', rpe: '' }
+  ];
+  sProfile();
+}
+function togDayExpand(d) {
+  S.openDays = S.openDays || {};
+  S.openDays[d] = !S.openDays[d];
+  sProfile();
+}
+function shiftMonth(n) { const [y, m] = S.cm.split('-').map(Number); S.cm = ymd(y, m - 1 + n, 1).slice(0, 7); sProfile(); }
+
+function calHtml(cid) {
+  const [y, m] = S.cm.split('-').map(Number), first = new Date(y, m - 1, 1), lead = (first.getDay() + 6) % 7, n = new Date(y, m, 0).getDate(), days = sDays(cid), t = today();
+  let cells = '';
+  for (let i = 0; i < lead; i++) cells += '<span></span>';
+  for (let d = 1; d <= n; d++) {
+    const k = ymd(y, m - 1, d), has = logged(days[k]);
+    cells += `<button class="cd ${has ? 'has' : ''} ${k == S.sd ? 'sel' : ''} ${k == t ? 'tod' : ''}" onclick="pickDay('${k}')" aria-label="${nice(k)}${has ? ', workout recorded' : ''}">${d}</button>`;
+  }
+  const title = first.toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+  return `<div class="row" style="flex-wrap:nowrap"><button class="g" style="flex:0" onclick="shiftMonth(-1)" aria-label="Previous month">‹</button><b style="text-align:center">${title}</b><button class="g" style="flex:0" onclick="shiftMonth(1)" aria-label="Next month">›</button></div>
+  <div class="cal cw">${['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(x => `<span>${x}</span>`).join('')}</div><div class="cal">${cells}</div>
+  <div class="mu">Green dot = workout recorded · red outline = today · tap any date to log</div>`;
+}
+
+function itemHtml(it, edit) {
+  const rich = parseRichItem(it);
+  const flds = String(it.fields || '').split(',').filter(Boolean);
+  const badges = [];
+
+  if (rich.setRows.length) {
+    badges.push(`<span class="chip stat"><span class="mu">Sets</span> <b>${rich.setRows.length}</b></span>`);
+  } else if (flds.includes('sets') && String(it.sets || '').trim()) {
+    badges.push(`<span class="chip stat"><span class="mu">Sets</span> <b>${esc(it.sets.trim())}</b></span>`);
+  }
+
+  if (!rich.setRows.length && flds.includes('reps') && String(it.reps || '').trim()) {
+    badges.push(`<span class="chip stat"><span class="mu">Reps / Count</span> <b>${esc(it.reps.trim())}</b></span>`);
+  }
+  if (!rich.setRows.length && flds.includes('weight') && String(it.weight || '').trim()) {
+    badges.push(`<span class="chip stat"><span class="mu">Weight</span> <b>${esc(it.weight.trim())}</b></span>`);
+  }
+  if (flds.includes('duration') && String(it.duration || '').trim()) {
+    badges.push(`<span class="chip stat"><span class="mu">Duration</span> <b>${esc(uv('duration', it.duration.trim()))}</b></span>`);
+  }
+  if (flds.includes('distance') && String(it.distance || '').trim()) {
+    badges.push(`<span class="chip stat"><span class="mu">Distance</span> <b>${esc(uv('distance', it.distance.trim()))}</b></span>`);
+  }
+  if (rich.pace) {
+    badges.push(`<span class="chip stat"><span class="mu">Speed / Pace</span> <b>${esc(rich.pace)}</b></span>`);
+  }
+  if (rich.rest) {
+    badges.push(`<span class="chip stat"><span class="mu">Rest</span> <b>${esc(rich.rest)}</b></span>`);
+  }
+  if (rich.rpe) {
+    badges.push(`<span class="chip stat"><span class="mu">RPE</span> <b>${esc(rich.rpe)}</b></span>`);
+  }
+
+  const setPills = rich.setRows.length
+    ? `<div class="setpills">${rich.setRows.map((s, idx) => {
+        const parts = [];
+        if (s.reps) parts.push(`Reps/Count: ${s.reps}`);
+        if (s.weight) parts.push(`Wt: ${s.weight}`);
+        if (s.duration) parts.push(`Time: ${s.duration}`);
+        if (s.distance) parts.push(`Dist: ${s.distance}`);
+        if (s.rpe) parts.push(`RPE ${s.rpe}`);
+        return `<span class="sp"><span>Set ${idx + 1}:</span> ${esc(parts.join(' · ') || '—')}</span>`;
+      }).join('')}</div>`
+    : '';
+
+  return `<div class="item">
+    <div class="row"><b style="flex:2">${esc(it.exercise)}</b>${edit ? `<button class="g sm" style="flex:0" onclick="editItem('${it.id}')">Edit</button><button class="d sm" style="flex:0" onclick="delItem('${it.id}')">Delete</button>` : ''}</div>
+    ${setPills}
+    ${badges.length ? `<div class="chips" style="margin:6px 0 2px">${badges.join('')}</div>` : ''}
+    ${rich.cleanNotes ? `<div class="mu" style="margin-top:4px">Note: ${esc(rich.cleanNotes)}</div>` : ''}
+  </div>`;
+}
+
+function dayCard(cid, d, edit, expanded = true) {
+  const items = sDay(cid, d);
+  if (edit) {
+    return `<div class="card ${items.length ? 'done' : ''}"><div class="row"><b style="flex:2">${nice(d)}</b><span class="mu">${items.length} exercise${items.length === 1 ? '' : 's'}</span></div>${items.map(i => itemHtml(i, true)).join('') || '<p class="mu">No exercises recorded for this day yet. Add one below.</p>'}</div>`;
+  }
+  return `<div class="card ${items.length ? 'done' : ''} ${expanded ? 'open' : ''}">
+    <div class="dayhd" onclick="togDayExpand('${d}')">
+      <div><span class="chev">▶</span><b>${nice(d)}</b> <span class="mu">(${items.length} exercise${items.length === 1 ? '' : 's'})</span></div>
+      <button class="g sm" style="flex:0;white-space:nowrap" onclick="event.stopPropagation();pickDay('${d}')">Log / edit</button>
+    </div>
+    ${expanded ? (items.map(i => itemHtml(i, false)).join('') || '<p class="mu">No exercises recorded.</p>') : ''}
+  </div>`;
+}
+
+function renderSetColToggles() {
+  const box = $('s_setcols'); if (!box) return;
+  const cols = S.setCols || ['reps', 'weight'];
+  box.innerHTML = SET_METRIC_DEFS.map(m => `<label class="scol">
+    <input type="checkbox" ${cols.includes(m.id) ? 'checked' : ''} onchange="togSetCol('${m.id}', this.checked)">
+    ${m.label}
+  </label>`).join('');
+}
+function togSetCol(colId, checked) {
+  S.setCols = S.setCols || ['reps', 'weight'];
+  if (checked) {
+    if (!S.setCols.includes(colId)) S.setCols.push(colId);
+  } else {
+    S.setCols = S.setCols.filter(x => x !== colId);
+    if (!S.setCols.length) S.setCols = ['reps'];
+  }
+  renderSetColToggles();
+  renderSetInputs();
+}
+
+function renderSetInputs() {
+  const box = $('s_setrows'); if (!box) return;
+  const rows = S.setRows || [];
+  const cols = S.setCols || ['reps', 'weight'];
+  box.innerHTML = rows.map((r, idx) => {
+    const inputsHtml = cols.map(cid => {
+      const def = SET_METRIC_DEFS.find(x => x.id === cid) || { id: cid, label: cid, ph: cid };
+      return `<input placeholder="${esc(def.ph)}" value="${esc(r[cid] || '')}" oninput="S.setRows[${idx}]['${cid}']=this.value">`;
+    }).join('');
+    return `<div class="setrow">
+      <span class="tag">Set ${idx + 1}</span>
+      ${inputsHtml}
+      ${rows.length > 1 ? `<button type="button" class="g" onclick="removeSetRow(${idx})" aria-label="Remove set">✕</button>` : ''}
+    </div>`;
+  }).join('');
+}
+function addSetRow() {
+  S.setRows = S.setRows || [];
+  const last = S.setRows[S.setRows.length - 1] || {};
+  S.setRows.push({
+    reps: last.reps || '',
+    weight: last.weight || '',
+    duration: last.duration || '',
+    distance: last.distance || '',
+    rpe: last.rpe || ''
+  });
+  renderSetInputs();
+}
+function removeSetRow(idx) {
+  S.setRows.splice(idx, 1);
+  renderSetInputs();
+}
+
+function sProfile() { sProfile0(); if (S.sd && S.sc && $('dm_prog')) dmLoad(S.sc, S.sd); }
+const dmCard = (cid, date) => `<div class="card"><h2>Day details</h2><div class="mu">Program name (shown to the client)</div><input id="dm_prog" placeholder="e.g. Push Day, Leg Day" oninput="this.dataset.dirty=1"><div class="gap"></div><div class="mu">Coach comments (private: only coaches and admins can see these)</div><textarea id="dm_cmt" rows="3" placeholder="How the session went, form notes, what to change next time…" oninput="this.dataset.dirty=1"></textarea><div class="gap"></div><button onclick="dmSave('${cid}','${date}')">Save day details</button></div>`;
+async function dmLoad(cid, date) {
+  const key = cid + '|' + date; S.dmReq = key;
+  const [a, b] = await Promise.all([sb.from('client_day_meta').select('program_name').eq('client_id', cid).eq('date', date).maybeSingle(), sb.from('session_comments').select('comment').eq('client_id', cid).eq('date', date).maybeSingle()]);
+  if (S.dmReq !== key) return;
+  const p = $('dm_prog'), c = $('dm_cmt');
+  if (p && !p.dataset.dirty) p.value = (a.data && a.data.program_name) || '';
+  if (c && !c.dataset.dirty) c.value = (b.data && b.data.comment) || '';
+}
+async function dmSave(cid, date) {
+  const pn = $('dm_prog').value.trim(), cm = $('dm_cmt').value.trim();
+  try {
+    checkErr(await sb.from('client_day_meta').upsert({ client_id: cid, date, program_name: pn }, { onConflict: 'client_id,date' }));
+    checkErr(await sb.from('session_comments').upsert({ client_id: cid, date, comment: cm, created_by: S.u.id }, { onConflict: 'client_id,date' }));
+    ['dm_prog', 'dm_cmt'].forEach(i => { if ($(i)) delete $(i).dataset.dirty; }); toast('Day details saved');
+  } catch (e) { alert(e.message || 'Could not save day details'); }
+}
+function sProfile0() {
+  const c = S.cl.find(x => x.id == S.sc); if (!c || !$('tb')) return;
+  const days = sDays(c.id), all = Object.keys(days).filter(d => logged(days[d])).sort().reverse();
+  const mo = all.filter(d => d.slice(0, 7) == today().slice(0, 7)).length, n = S.rc || 5;
+  let body;
+  if (S.sd) {
+    const g = [...new Set(S.ex.map(e => e.group))];
+    body = `<button class="g" onclick="S.sd='';S.ed='';sProfile()">← Back to client profile</button>` + dayCard(c.id, S.sd, true) + dmCard(c.id, S.sd)
+      + `<div class="card" id="sform"><h2>${S.ed ? 'Edit exercise' : 'Log exercise for ' + nice(S.sd)}</h2>
+      <div class="row"><select id="sg" onchange="exRefresh('se')"><option value="">All groups</option>${g.map(x => `<option>${esc(x)}</option>`).join('')}</select><div class="cb" style="flex:2 1 160px"><input id="se" autocomplete="off" role="combobox" aria-expanded="false" data-g="sg" data-l="sel" placeholder="Exercise name (type to search)" oninput="exFilter(this);sPreset()" onfocus="exFocus(this)" onkeydown="exKey(event,this)" onchange="sPreset()"><div id="sel" class="cb-list" role="listbox" hidden></div></div></div>
+      <div class="gap"></div><div class="mu">Select any combination of per-set details and workout metrics that apply:</div>
+      <div class="chips">
+        <label class="chip"><input type="checkbox" id="s_f_perset" onchange="sTog()"> Set 1, Set 2… (Per-set)</label>
+        <label class="chip"><input type="checkbox" id="s_f_reps" onchange="sTog()"> Reps / Count</label>
+        <label class="chip"><input type="checkbox" id="s_f_weight" onchange="sTog()"> Weight</label>
+        <label class="chip"><input type="checkbox" id="s_f_duration" onchange="sTog()"> Duration</label>
+        <label class="chip"><input type="checkbox" id="s_f_distance" onchange="sTog()"> Distance</label>
+        <label class="chip"><input type="checkbox" id="s_f_pace" onchange="sTog()"> Speed / Pace</label>
+        <label class="chip"><input type="checkbox" id="s_f_rest" onchange="sTog()"> Rest</label>
+        <label class="chip"><input type="checkbox" id="s_f_rpe" onchange="sTog()"> RPE / Load</label>
+        <label class="chip"><input type="checkbox" id="s_f_sets" onchange="sTog()"> Total Sets</label>
+      </div>
+      <div id="s_w_perset">
+        <div class="row" style="justify-content:space-between;margin-bottom:4px"><span class="mu">Per-set breakdown (choose columns &amp; sets):</span><button type="button" class="g sm" style="flex:0" onclick="addSetRow()">+ Add set</button></div>
+        <div class="setcols" id="s_setcols"></div>
+        <div class="setlist" id="s_setrows"></div>
+      </div>
+      <div class="fields">
+        <div id="s_w_reps" class="f1"><div class="mu">Reps / Count</div><input id="s_t_reps" placeholder="e.g. 15 or 30"></div>
+        <div id="s_w_weight" class="f1"><div class="mu">Weight</div><input id="s_t_weight" placeholder="e.g. 40 kg or BW"></div>
+        <div id="s_w_duration" class="f2"><div class="mu">Duration</div><div class="row u"><input id="s_t_duration" type="number" inputmode="decimal" step="any">${unitSel('duration', 'id="s_u_duration"', UDEF.duration)}</div></div>
+        <div id="s_w_distance" class="f2"><div class="mu">Distance</div><div class="row u"><input id="s_t_distance" type="number" inputmode="decimal" step="any">${unitSel('distance', 'id="s_u_distance"', UDEF.distance)}</div></div>
+        <div id="s_w_pace" class="f1"><div class="mu">Speed / Pace</div><input id="s_t_pace" placeholder="e.g. 10 km/h or 5:00/km"></div>
+        <div id="s_w_rest" class="f1"><div class="mu">Rest</div><input id="s_t_rest" placeholder="e.g. 60 sec or 90s"></div>
+        <div id="s_w_rpe" class="f1"><div class="mu">RPE / Load</div><input id="s_t_rpe" placeholder="e.g. 8/10"></div>
+        <div id="s_w_sets" class="f1"><div class="mu">Total Sets</div><input id="s_t_sets" inputmode="numeric" placeholder="e.g. 4"></div>
+      </div>
+      <input id="sn" placeholder="Notes (form, tempo, incline, resistance, how it felt, etc.)"><div class="gap"></div>
+      <div class="row"><button id="ssave" onclick="saveItem()">${S.ed ? 'Save changes' : 'Add to session'}</button>${S.ed ? `<button class="g" onclick="S.ed='';sProfile()">Cancel</button>` : ''}</div></div>`;
+  } else {
+    body = `<div class="row" style="margin:6px 0 12px">
+        <h2 style="flex:1 1 100%">Recent gym sessions</h2>
+        <input type="date" id="s_pickdate" value="${today()}" style="flex:1 1 140px;min-height:42px;padding:8px 12px" onchange="pickDay(this.value)">
+        <button style="flex:0 0 auto;white-space:nowrap;min-height:42px" onclick="pickDay($('s_pickdate').value || '${today()}')">+ Log day</button>
+      </div>`
+      + (all.slice(0, n).map((d, idx) => dayCard(c.id, d, false, Boolean((S.openDays && S.openDays[d]) || idx < 2))).join('') || '<p class="mu">No sessions recorded yet. Pick a date above or tap a day on the calendar.</p>')
+      + (all.length > n ? `<button class="g" onclick="S.rc=${n + 5};sProfile()">Show earlier sessions</button>` : '');
+  }
+  set('tb', `<button class="g" onclick="S.sc='';S.sd='';S.ed='';tSessions()">← All clients</button>
+  <div class="card"><h2>${esc(c.name)}</h2><div class="mu">@${esc(c.username)}</div>
+  <div class="stats"><div><b>${all.length}</b><div class="mu">Total sessions</div></div><div><b>${mo}</b><div class="mu">This month</div></div><div><b>${all[0] ? nice(all[0]) : '—'}</b><div class="mu">Last session</div></div></div></div>
+  <div class="card">${calHtml(c.id)}</div>${body}`);
+  if (S.sd) { sDl(); if (S.ed) fillForm(); else { sPreset(); renderSetColToggles(); renderSetInputs(); } }
+  countUp();
+}
+
+function sDl() { }
+const SESSION_TOGGLE_KEYS = ['sets', 'reps', 'weight', 'duration', 'distance', 'pace', 'rest', 'rpe'];
+function sTog() {
+  const ps = $('s_f_perset');
+  const pw = $('s_w_perset');
+  if (pw && ps) pw.style.display = ps.checked ? '' : 'none';
+  SESSION_TOGGLE_KEYS.forEach(k => { const w = $('s_w_' + k), c = $('s_f_' + k); if (w && c) w.style.display = c.checked ? '' : 'none'; });
+}
+function sPreset() {
+  if (S.ed) return;
+  const n = $('se') ? $('se').value : '';
+  const cardio = isCardio(n);
+  const f = cardio ? ['duration', 'distance'] : ['perset'];
+  if ($('s_f_perset')) $('s_f_perset').checked = f.includes('perset');
+  SESSION_TOGGLE_KEYS.forEach(k => { const c = $('s_f_' + k); if (c) c.checked = f.includes(k); });
+  if (!S.setCols) S.setCols = ['reps', 'weight'];
+  if (!S.setRows || !S.setRows.length) {
+    S.setRows = [
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' }
+    ];
+  }
+  renderSetColToggles();
+  renderSetInputs();
+  sTog();
+}
+
+function fillForm() {
+  const it = sDay(S.sc, S.sd).find(x => x.id == S.ed); if (!it) { S.ed = ''; return; }
+  const rich = parseRichItem(it);
+  $('se').value = it.exercise;
+  $('sn').value = rich.cleanNotes || '';
+  const f = String(it.fields || '').split(',').filter(Boolean);
+
+  if ($('s_f_perset')) $('s_f_perset').checked = rich.setRows.length > 0;
+  S.setCols = rich.setCols;
+  S.setRows = rich.setRows.length
+    ? rich.setRows.map(s => ({ reps: s.reps || '', weight: s.weight || '', duration: s.duration || '', distance: s.distance || '', rpe: s.rpe || '' }))
+    : [{ reps: '', weight: '', duration: '', distance: '', rpe: '' }, { reps: '', weight: '', duration: '', distance: '', rpe: '' }];
+  renderSetColToggles();
+  renderSetInputs();
+
+  SESSION_TOGGLE_KEYS.forEach(k => {
+    const chk = $('s_f_' + k);
+    let v = '';
+    if (k === 'pace') v = rich.pace;
+    else if (k === 'rest') v = rich.rest;
+    else if (k === 'rpe') v = rich.rpe;
+    else v = val(it, k, it);
+
+    const active = f.includes(k) || Boolean(v);
+    if (chk) chk.checked = active && !(rich.setRows.length && (k === 'sets' || k === 'reps' || k === 'weight'));
+    if (UN[k]) {
+      const p = parseUV(k, v);
+      if ($('s_t_' + k)) $('s_t_' + k).value = p.n;
+      if ($('s_u_' + k)) $('s_u_' + k).value = p.u;
+    } else if ($('s_t_' + k)) {
+      $('s_t_' + k).value = (rich.setRows.length && (k === 'sets' || k === 'reps' || k === 'weight')) ? '' : v;
+    }
+  });
+  sTog(); $('sform').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+async function saveItem() {
+  const n = $('se').value.trim(); if (!n) { alert('Type the exercise name'); return; }
+  const usePerSet = $('s_f_perset') && $('s_f_perset').checked;
+  const f = SESSION_TOGGLE_KEYS.filter(k => $('s_f_' + k) && $('s_f_' + k).checked);
+  if (!usePerSet && !f.length) { alert('Tick at least one workout metric (Per-set, Reps/Count, Weight, Duration, Distance, Pace, Rest, or RPE).'); return; }
+
+  const activeSetRows = usePerSet
+    ? (S.setRows || []).filter(r => ['reps', 'weight', 'duration', 'distance', 'rpe'].some(col => String(r[col] || '').trim()))
+    : [];
+  if (usePerSet && !activeSetRows.length) { alert('Enter at least one value (reps, weight, duration, distance, or RPE) in Set 1.'); return; }
+
+  const allFields = (usePerSet ? ['perset'] : []).concat(f);
+  const rawPayload = { clientId: S.sc, date: S.sd, exercise: n, fields: allFields.join(','), notes: $('sn').value.trim() };
+
+  SESSION_TOGGLE_KEYS.forEach(k => {
+    const inp = $('s_t_' + k);
+    const v = (f.includes(k) && inp) ? inp.value.trim() : '';
+    if (k === 'pace' || k === 'rest' || k === 'rpe') {
+      rawPayload[k] = v;
+    } else {
+      rawPayload[k] = (UN[k] && v) ? v + ' ' + $('s_u_' + k).value : v;
+    }
+  });
+
+  if (usePerSet) {
+    rawPayload.sets = String(activeSetRows.length);
+    rawPayload.reps = activeSetRows.map(r => {
+      const parts = [];
+      if (String(r.reps || '').trim()) parts.push(String(r.reps).trim());
+      if (String(r.weight || '').trim()) parts.push('@ ' + String(r.weight).trim());
+      if (String(r.duration || '').trim()) parts.push('(' + String(r.duration).trim() + ')');
+      if (String(r.distance || '').trim()) parts.push('[' + String(r.distance).trim() + ']');
+      if (String(r.rpe || '').trim()) parts.push('RPE ' + String(r.rpe).trim());
+      return parts.join(' ');
+    }).join(' | ');
+  }
+
+  const hasAnyVal = usePerSet || SESSION_TOGGLE_KEYS.some(k => Boolean(rawPayload[k])) || Boolean(rawPayload.notes);
+  if (!hasAnyVal) { alert('Enter at least one value for this exercise.'); return; }
+
+  const payload = serializeRichPayload(rawPayload, S.setCols, usePerSet ? activeSetRows : null);
+
+  const btn = $('ssave'); if (btn) { btn.disabled = true; btn.textContent = 'Saving…'; }
+  try {
+    if (S.ed) await api('delSession', { id: S.ed });
+    await api('addSession', payload);
+    S.openDays = S.openDays || {};
+    S.openDays[S.sd] = true;
+    S.ed = '';
+    S.setRows = [
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' },
+      { reps: '', weight: '', duration: '', distance: '', rpe: '' }
+    ];
+    await fetchClientSessions(S.sc);
+    toast('Exercise logged');
+    sProfile();
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = S.ed ? 'Save changes' : 'Add to session'; }
+  }
+}
+
+function editItem(id) { S.ed = id; sProfile(); }
+
+async function delItem(id) {
+  if (!confirm('Delete this exercise from the session?')) return;
+  await api('delSession', { id });
+  if (S.ed == id) S.ed = '';
+  await fetchClientSessions(S.sc);
+  sProfile();
+}
+
+
+/* ---- exercise type-ahead (all pickers) ---- */
+S.exOpts = {}; S.exI = {};
+const exGroups = () => [...new Set(S.ex.map(e => e.group).concat(['Custom']))].sort((a, b) => String(a).localeCompare(String(b)));
+function exFilter(inp) {
+  const l = $(inp.dataset.l); if (!l) return;
+  const q = inp.value.toLowerCase().trim(), toks = q.split(/\s+/).filter(Boolean), gs = $(inp.dataset.g), g = gs ? gs.value : '';
+  const m = S.ex.filter(e => (!g || e.group == g) && toks.every(t => (e.name + ' ' + e.group).toLowerCase().includes(t)))
+    .sort((a, b) => (b.name.toLowerCase().startsWith(q) ? 1 : 0) - (a.name.toLowerCase().startsWith(q) ? 1 : 0) || a.name.localeCompare(b.name));
+  const opts = m.slice(0, 8).map(e => ({ t: 'ex', e }));
+  if (q && !S.ex.some(e => e.name.toLowerCase() == q)) opts.push({ t: 'new', name: inp.value.trim(), g: g || 'Custom' });
+  S.exOpts[l.id] = opts; S.exI[l.id] = 0; l.hidden = false; inp.setAttribute('aria-expanded', 'true');
+  l.innerHTML = opts.map((o, i) => o.t == 'ex'
+    ? `<button type="button" class="cb-o ${i ? '' : 'on'}" role="option" onclick="exPickAt('${inp.id}', ${i})">${esc(o.e.name)}<span>${esc(o.e.group)}</span></button>`
+    : `<button type="button" class="cb-o add ${i ? '' : 'on'}" role="option" onclick="exPickAt('${inp.id}', ${i})">+ Add “${esc(o.name)}” as new exercise<span>${esc(o.g)}</span></button>`).join('')
+    + (m.length > 8 ? `<div class="cb-n">+${m.length - 8} more · keep typing to narrow</div>` : '')
+    + (!opts.length ? '<div class="cb-n">No exercises in this group yet. Type a name to add one.</div>' : '');
+}
+function exFocus(inp) { exFilter(inp); setTimeout(() => { try { inp.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {} }, 300); }
+function raFocus(inp) { raFilter(); setTimeout(() => { try { inp.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (_) {} }, 300); }
+function exRefresh(id) { const i = $(id); if (i && $(i.dataset.l) && !$(i.dataset.l).hidden) exFilter(i); }
+async function exPickAt(id, i) {
+  const inp = $(id), l = $(inp.dataset.l), o = (S.exOpts[l.id] || [])[i]; if (!o) return;
+  if (o.t == 'new') {
+    if (!o.name) return;
+    try { await api('addExercise', { name: o.name, group: o.g }); } catch (e) { alert(e.message || 'Could not add exercise'); return; }
+    if (!S.ex.some(x => x.name.toLowerCase() == o.name.toLowerCase())) { S.ex.push({ name: o.name, group: o.g, media: '' }); S.ex.sort((a, b) => a.name.localeCompare(b.name)); }
+    toast('Added “' + o.name + '” to ' + o.g);
+    inp.value = o.name;
+  } else inp.value = o.e.name;
+  l.hidden = true; inp.setAttribute('aria-expanded', 'false');
+  inp.dispatchEvent(new Event('change', { bubbles: true }));
+}
+function exKey(e, inp) {
+  const l = $(inp.dataset.l), o = [...l.querySelectorAll('[role=option]')];
+  if (e.key == 'ArrowDown' || e.key == 'ArrowUp') { e.preventDefault(); if (l.hidden) return exFilter(inp); if (!o.length) return; S.exI[l.id] = (S.exI[l.id] + (e.key == 'ArrowDown' ? 1 : -1) + o.length) % o.length; o.forEach((b, i) => b.classList.toggle('on', i == S.exI[l.id])); o[S.exI[l.id]].scrollIntoView({ block: 'nearest' }); }
+  else if (e.key == 'Enter') { if (!l.hidden && o.length) { e.preventDefault(); exPickAt(inp.id, S.exI[l.id] || 0); } }
+  else if (e.key == 'Escape') { l.hidden = true; }
+}
+document.addEventListener('click', e => document.querySelectorAll('.cb-list:not([hidden])').forEach(l => { if (!e.composedPath().includes(l.parentNode)) l.hidden = true; }));
+function nxPrefill() { const d = $('nx'); if (d) d.open = true; $('nx_n').value = ($('xs').value || '').trim(); $('nx_n').focus(); }
+async function addCustomEx() {
+  const n = $('nx_n').value.trim(); if (!n) { alert('Type the exercise name'); return; }
+  if (S.ex.some(e => e.name.toLowerCase() == n.toLowerCase())) { alert('That exercise already exists. Search for it below.'); $('xs').value = n; renderEx(); return; }
+  let g = $('nx_g').value; if (g == '__new') g = $('nx_gn').value.trim(); if (!g) { alert('Choose a group or type a new one'); return; }
+  const url = $('nx_m').value.trim(); if (url && !okUrl(url)) { alert('The link must start with http:// or https://'); return; }
+  const raw = composeMedia(url, 'auto');
+  try { await api('setMedia', { name: n, group: g, media: raw }); } catch (e) { alert(e.message || 'Could not add exercise'); return; }
+  S.ex.push({ name: n, group: g, media: raw }); S.ex.sort((a, b) => a.name.localeCompare(b.name));
+  ['nx_n', 'nx_gn', 'nx_m'].forEach(i => { $(i).value = ''; }); $('xs').value = n; renderEx(); toast('Exercise added');
+}
+
+/* Exercise library: photos, GIFs and videos */
+const TYPES = [['auto', 'Auto'], ['photo', 'Photo / GIF'], ['video', 'Video']];
+function tExercises() {
+  set('tb', `<details class="card" id="nx"><summary><h2>Add custom exercise</h2></summary><input id="nx_n" placeholder="Exercise name, e.g. Cable Lateral Raise"><div class="row gap"><select id="nx_g" onchange="$('nx_gn').style.display = this.value == '__new' ? '' : 'none'">${exGroups().map(g => `<option>${esc(g)}</option>`).join('')}<option value="__new">＋ New group…</option></select><input id="nx_gn" placeholder="New group name" style="display:none"></div><input id="nx_m" type="url" inputmode="url" placeholder="Photo / GIF / video link (optional)"><div class="gap"></div><button onclick="addCustomEx()">Add exercise</button></details><div class="card"><input id="xs" placeholder="Search exercises…" oninput="renderEx()"><div class="mu gap">Paste a link to a photo, GIF or video (YouTube, Google Drive, or a direct image/video file). Clients see it at the top of the exercise, on the same page. For Google Drive photos and GIFs, set “Show as” to Photo / GIF.</div></div><div id="xl" class="grid"></div>`);
+  renderEx();
+}
+function renderEx() {
+  const q = ($('xs') ? $('xs').value : '').toLowerCase().trim();
+  const toks = q.split(/\s+/).filter(Boolean);
+  S.xl = S.ex.filter(e => toks.every(t => (e.name + ' ' + e.group).toLowerCase().includes(t))).slice(0, 40);
+  set('xl', (S.xl.map((e, i) => { const sm = splitMedia(e.media); return `<div class="card"><b>${esc(e.name)}</b> <span class="mu">${esc(e.group)}</span>
+    <div class="row gap"><input id="xm${i}" type="url" inputmode="url" placeholder="https://…" value="${esc(sm.url)}"><select id="xt${i}" style="flex:0 0 auto" title="Show as">${TYPES.map(([v, l]) => `<option value="${v}" ${v == sm.type ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+    <div class="row gap"><button onclick="saveMedia(${i})">Save</button><button class="g" onclick="previewMedia(${i})">Preview</button></div><div id="xp${i}"></div></div>`; }).join('')
+    + (S.xl.length == 40 ? '<p class="mu">Showing the first 40. Type in the search box to narrow down.</p>' : '')) || ('<p class="mu">No exercises match.</p>' + (q ? '<button onclick="nxPrefill()">+ Add this as a custom exercise</button>' : '')));
+}
+function previewMedia(i) {
+  const e = S.xl[i], inp = $('xm' + i), box = $('xp' + i); if (!e || !inp || !box) return;
+  const url = inp.value.trim();
+  if (url && !okUrl(url)) { alert('The link must start with http:// or https://'); return; }
+  const raw = composeMedia(url, $('xt' + i).value);
+  box.innerHTML = raw ? `<div class="gap"></div>` + mediaBlock(raw, 'x' + i, e.name) : '<p class="mu">No link yet. Clients will see a YouTube search link instead.</p>';
+}
+async function saveMedia(i) {
+  const e = S.xl[i], inp = $('xm' + i); if (!e || !inp) return;
+  const url = inp.value.trim();
+  if (url && !okUrl(url)) { alert('The link must start with http:// or https://'); return; }
+  const raw = composeMedia(url, $('xt' + i).value);
+  await api('setMedia', { name: e.name, group: e.group, media: raw });
+  e.media = raw;
+  const b = inp.closest('.card').querySelector('button'); if (b) { b.textContent = 'Saved'; setTimeout(() => b.textContent = 'Save', 1200); }
+  previewMedia(i);
+}
+
+boot();
+</script><script>if('serviceWorker' in navigator&&location.protocol.startsWith('http'))addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))</script>
+</body></html>
